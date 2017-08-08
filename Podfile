@@ -7,6 +7,8 @@ target 'Liner' do
 
   # Pods for Liner
 pod 'Firebase/Core'
+pod 'Firebase/Auth'
+pod 'Firebase/Database'
 
   target 'LinerTests' do
     inherit! :search_paths
