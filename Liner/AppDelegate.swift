@@ -1,29 +1,39 @@
 //
 //  AppDelegate.swift
-//  Liner
+//  testfirebase8
 //
-//  Created by Alexander Li on 8/7/17.
-//  Copyright © 2017 Alexander Li. All rights reserved.
+//  Created by Rohan Patel on 7/22/17.
+//  Copyright © 2017 Rohan Patel. All rights reserved.
 //
 
 import UIKit
+import Firebase
+
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
     var window: UIWindow?
 
-
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
+        // Override point for customization after application launch.
+        
+        FirebaseApp.configure();
+
+        
+        let mainController = LoginViewController() as UIViewController
+        // create a nagivation controller
+        let navigationController = UINavigationController(rootViewController: mainController)
         
         window = UIWindow()
+        self.window!.rootViewController = navigationController
         window?.makeKeyAndVisible()
         
-        window = UIApplication()
+        
         
         // Override point for customization after application launch.
-        return true
         
+        return true
     }
 
     func applicationWillResignActive(_ application: UIApplication) {
@@ -31,7 +41,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // Use this method to pause ongoing tasks, disable timers, and invalidate graphics rendering callbacks. Games should use this method to pause the game.
     }
 
-    func applicationDidEnterBackground(_ application: UIApplicatsion) {
+    func applicationDidEnterBackground(_ application: UIApplication) {
         // Use this method to release shared resources, save user data, invalidate timers, and store enough application state information to restore your application to its current state in case it is terminated later.
         // If your application supports background execution, this method is called instead of applicationWillTerminate: when the user quits.
     }
