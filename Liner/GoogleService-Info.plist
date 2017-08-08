@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>AD_UNIT_ID_FOR_BANNER_TEST</key>
+	<string>ca-app-pub-3940256099942544/2934735716</string>
+	<key>AD_UNIT_ID_FOR_INTERSTITIAL_TEST</key>
+	<string>ca-app-pub-3940256099942544/4411468910</string>
+	<key>CLIENT_ID</key>
+	<string>377666551400-397v2ofllu43aovr9svpaqcsgjljtjmv.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.377666551400-397v2ofllu43aovr9svpaqcsgjljtjmv</string>
+	<key>API_KEY</key>
+	<string>AIzaSyC-21FlRz7IXgbWnNPeXSolKHh8X3oi18M</string>
+	<key>GCM_SENDER_ID</key>
+	<string>377666551400</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.AlexLi.Liner</string>
+	<key>PROJECT_ID</key>
+	<string>liner-2de28</string>
+	<key>STORAGE_BUCKET</key>
+	<string>liner-2de28.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<true/>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false/>
+	<key>IS_APPINVITE_ENABLED</key>
+	<false/>
+	<key>IS_GCM_ENABLED</key>
+	<true/>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true/>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:377666551400:ios:5de8d7799dd1985a</string>
+	<key>DATABASE_URL</key>
+	<string>https://liner-2de28.firebaseio.com</string>
+</dict>
+</plist>
