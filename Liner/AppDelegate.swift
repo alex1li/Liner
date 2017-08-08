@@ -18,6 +18,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         window = UIWindow()
         
+        window = UIApplication()
         
         // Override point for customization after application launch.
         return true
