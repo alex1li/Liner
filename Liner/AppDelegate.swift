@@ -14,11 +14,17 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     var window: UIWindow?
 
-
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
 
         FirebaseApp.configure()
-        // Override point for customization after application launch.
+        
+        let mainController = LoginViewController() as UIViewController
+        let navigationController = UINavigationController(rootViewController: mainController)
+        
+        window = UIWindow()
+        self.window!.rootViewController = navigationController
+        window?.makeKeyAndVisible()
+        
         return true
         
     }
