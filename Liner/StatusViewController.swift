@@ -40,9 +40,7 @@ class StatusViewController: UIViewController {
     }
     
     func joinQueue(_ button:UIBarButtonItem!){
-        let queueList = QueueListViewController()
-        self.addChildViewController(queueList);
-        self.navigationController?.pushViewController(queueList, animated: true)
+        self.navigationController?.pushViewController( ChooseViewController(), animated: true)
     }
     
 

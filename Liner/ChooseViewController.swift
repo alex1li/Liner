@@ -1,5 +1,5 @@
 //
-//  QueueListViewController.swift
+//  ChooseViewController.swift
 //  Liner
 //
 //  Created by Alexander Li on 8/9/17.
@@ -7,46 +7,64 @@
 //
 
 import UIKit
+import Firebase
+import FirebaseDatabase
 
 
-class QueueListViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, UISearchResultsUpdating {
+class ChooseViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, UISearchResultsUpdating {
     
     var tableView: UITableView!
     var names: [String]! = []
     var count = 0;
     let searchController = UISearchController(searchResultsController: nil)
-    var filterednames:[String]!;
+    
+    var queueList = [String]()
+    var ref: DatabaseReference?
+    var handle: DatabaseHandle?
+    var handle2: DatabaseHandle?
+    
+    var filteredQueues = [String]()
+    
+    var chosenQueue: String?
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        self.title = "Lynn"
+        self.title = "Queues"
         
-        initializenames()
-        print("Hello World")
-        view.backgroundColor = .orange
         tableView = UITableView(frame: view.frame)
         tableView.dataSource = self
         tableView.delegate = self
         view.addSubview(tableView)
         
+        tableView.backgroundColor = UIColor.white
         
-        let image = UIImage(named: "paris.png")
-        let imageView = UIImageView(image: image)
-        imageView.alpha = 0.3
+        ref = Database.database().reference()
         
+        handle = ref?.child("Queues").observe(.childAdded, with: { (snapshot) in
+            //This initally goes throough all existing data
+            let actualQueue = snapshot.key
+            self.queueList.append(actualQueue)
+            self.filteredQueues.append(actualQueue)
+            self.tableView.reloadData()
+        })
         
-        tableView.backgroundColor = UIColor(patternImage: image!)
+        handle2 = ref?.child("Queues").observe(.childRemoved, with: { (snapshot) in
+            //***Adding keys to myList instead of the values now to allow for easy deleting of top person
+            if (snapshot.key as String?) != nil {
+                self.queueList = self.queueList.filter { $0 != snapshot.key }
+                self.filteredQueues = self.filteredQueues.filter { $0 != snapshot.key }
+                self.tableView.reloadData()
+            }
+        })
         
-        filterednames = names;
+        filteredQueues = queueList
         
         searchController.searchResultsUpdater = self
         searchController.dimsBackgroundDuringPresentation = false
         definesPresentationContext = true
         tableView.tableHeaderView = searchController.searchBar
         
-        
-        // Do any additional setup after loading the view.
     }
     
     
@@ -55,45 +73,34 @@ class QueueListViewController: UIViewController, UITableViewDataSource, UITableV
         
         let cell = UITableViewCell(style: .default , reuseIdentifier: "")
         cell.backgroundColor = UIColor(white: 1, alpha: 0.1)
-        cell.layer.borderWidth = 2
-        cell.layer.borderColor = UIColor.black.cgColor
+        //cell.layer.borderWidth = 2
+        //cell.layer.borderColor = UIColor.black.cgColor
         
         
-        cell.textLabel?.text = filterednames[indexPath.row]
+        cell.textLabel?.text = filteredQueues[indexPath.row]
         cell.textLabel?.textAlignment = .center
         return cell
         
         
     }
     
-    func initializenames() {
-        names.append("Queue 1")
-        names.append("Queue 2")
-        names.append("Queue 3")
-        names.append("Queue 4")
-        names.append("Queue 5")
-        names.append("Queue 6")
-        names.append("Queue 7")
-        names.append("Queue 8")
-        names.append("Queue 9")
-        names.append("Queue 10")
-    }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        
-        count = indexPath.row
-        self.navigationController?.pushViewController( SingleQueueViewController(), animated: true)
-        
+        let chosenOne = filteredQueues[indexPath.row]
+        chosenQueue = chosenOne
+        Queue.chosenQueue = chosenOne
+        self.navigationController?.pushViewController( QueueViewController(), animated: true)
+        tableView.deselectRow(at: indexPath, animated: true)
         
     }
     
     func updateSearchResults(for searchController: UISearchController) {
         if(searchController.searchBar.text! == "") {
-            filterednames = names;
+            filteredQueues = queueList
         }
         else
         {
-            filterednames = names.filter(isMatch)
+            filteredQueues = queueList.filter(isMatch)
         }
         self.tableView.reloadData()
     }
@@ -108,12 +115,10 @@ class QueueListViewController: UIViewController, UITableViewDataSource, UITableV
             return false
             
         }
-        
-        
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return self.filterednames.count
+        return self.filteredQueues.count
     }
     
     
