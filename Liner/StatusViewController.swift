@@ -25,6 +25,9 @@ class StatusViewController: UIViewController {
         label.text = "I am a test label"
         self.view.addSubview(label)
         
+        navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Join", style: .plain, target: self, action: #selector(joinQueue))
+
+        
         
         super.viewDidLoad()
 
@@ -34,6 +37,12 @@ class StatusViewController: UIViewController {
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
+    }
+    
+    func joinQueue(_ button:UIBarButtonItem!){
+        let queueList = QueueListViewController()
+        self.addChildViewController(queueList);
+        self.navigationController?.pushViewController(queueList, animated: true)
     }
     
 

@@ -18,7 +18,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
         FirebaseApp.configure()
         
-        let mainController = LoginViewController() as UIViewController
+        let mainController = QueueListViewController() as UIViewController
         let navigationController = UINavigationController(rootViewController: mainController)
         
         window = UIWindow()
