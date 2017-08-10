@@ -42,6 +42,8 @@ class StatusViewController: UIViewController {
         print("View did load")
         view.backgroundColor = .white
         
+        self.title = user?.email
+        
         ref = Database.database().reference()
         
         //Leave button
@@ -52,6 +54,7 @@ class StatusViewController: UIViewController {
         leaveButton.setTitleColor(.red, for: .normal)
         leaveButton.titleLabel!.font = UIFont(name:"Avenir", size:30)
         leaveButton.titleLabel!.textAlignment = .left
+        leaveButton.isEnabled = false
         view.addSubview(leaveButton)
         
         //Your Queue Label
@@ -204,9 +207,11 @@ class StatusViewController: UIViewController {
         print(user?.displayName)
         activityIndicator.stopAnimating()
         print("left queue")
+        
         queueLocationLabel.text = "..."
         queueLocationLabel.textColor=UIColor.black
         queueLocationLabel.backgroundColor=UIColor.lightGray
+        
         queueNameLabel.text = "..."
         queueNameLabel.backgroundColor=UIColor.lightGray
         queueNameLabel.textColor=UIColor.black
