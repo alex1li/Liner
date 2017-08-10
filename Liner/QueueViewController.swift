@@ -62,13 +62,13 @@ class QueueViewController: UIViewController {
                 self.myList.append(item)
                 self.peopleAhead = self.myList.count-1
                 self.peopleAheadLabel.text = String(self.peopleAhead)
-                //self.waitLabel.text = String(self.peopleAhead*5) + "min"
-                //Queue.queues.append(item)
+                print("child added")
+                print(self.myList.count)
             }
         })
         if (Queue.linesJoined.contains(thisQueue!)){
             inThisQueue = true
-            self.view.backgroundColor = .white
+            self.view.backgroundColor = .blue
         }
         
         
@@ -76,10 +76,10 @@ class QueueViewController: UIViewController {
             //Adding keys to myList instead of the values now to allow for easy deleting of top person
             if (snapshot.key as String?) != nil {
                 self.myList.remove(at: 0)
-                self.peopleAhead = self.myList.count
+                self.peopleAhead = self.myList.count-1
                 self.peopleAheadLabel.text = String(self.peopleAhead)
-                //self.waitLabel.text = String(self.peopleAhead*5) + "min"
-                //Queue.queues.append(item)
+                print("child removed")
+                print(self.myList.count)
             }
         })
     }
@@ -87,6 +87,7 @@ class QueueViewController: UIViewController {
     
     func join(_ sender:Any){
         addChildToQueue(childName: (user?.email)!)
+        print("Joined Queue")
     }
     
     func addChildToQueue(childName: String){
