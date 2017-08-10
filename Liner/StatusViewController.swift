@@ -26,15 +26,18 @@ class StatusViewController: UIViewController {
     var found: Bool!
     
     var myList:[String] = []
+    
+    var user = Auth.auth().currentUser
 
     
     
     
     override func viewDidLoad() {
+        print("View did load")
         view.backgroundColor = .white
         
         ref = Database.database().reference()
-        let user = Auth.auth().currentUser
+        //let user = Auth.auth().currentUser
         
         //Your Queue Label
         yourQueueLabel = UILabel()
@@ -48,7 +51,6 @@ class StatusViewController: UIViewController {
         self.view.addSubview(yourQueueLabel)
         
         //Your Location Label
-        //Your Queue Label
         yourLocationLabel = UILabel()
         yourLocationLabel.frame = CGRect(x: 100, y: 300, width: 200, height: 200)
         yourLocationLabel.textAlignment = .center
@@ -65,6 +67,7 @@ class StatusViewController: UIViewController {
         queueNameLabel.textAlignment = .center
         queueNameLabel.numberOfLines=1
         queueNameLabel.font=UIFont.systemFont(ofSize: 30)
+        /*
         if(user?.displayName != nil){
             queueNameLabel.text = (user?.displayName)!
             queueNameLabel.backgroundColor=UIColor.blue
@@ -75,6 +78,7 @@ class StatusViewController: UIViewController {
             queueNameLabel.backgroundColor=UIColor.lightGray
             queueNameLabel.textColor=UIColor.black
         }
+        */
         self.view.addSubview(queueNameLabel)
         
         //Queue location label
@@ -84,14 +88,13 @@ class StatusViewController: UIViewController {
         queueLocationLabel.numberOfLines=1
         queueLocationLabel.font=UIFont.systemFont(ofSize: 30)
         if(user?.displayName != nil){
-            queueLocationLabel.textColor=UIColor.white
-            queueLocationLabel.backgroundColor=UIColor.blue
-
+            //handleDatabase()
+            /*
             handle = ref?.child("Queues").child((user?.displayName!)!).observe(.childAdded, with: { (snapshot) in
                 //Adding keys to myList instead of the values now to allow for easy deleting of top person
                 if let item = snapshot.value as! String? {
                     
-                    if(item == user?.email) {
+                    if(item == self.user?.email) {
                         self.queueLocationLabel.text = String(self.myList.count-1)
                         Queue.userLocationFound = true
                     }
@@ -115,13 +118,11 @@ class StatusViewController: UIViewController {
 
                 }
             })
+            */
 
         }
-        else{
-            queueLocationLabel.text = "..."
-            queueLocationLabel.textColor=UIColor.black
-            queueLocationLabel.backgroundColor=UIColor.lightGray
-        }
+            
+        
         
         self.view.addSubview(queueLocationLabel)
         
@@ -132,9 +133,6 @@ class StatusViewController: UIViewController {
         // Do any additional setup after loading the view.
     }
     
-    
-    
-    
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
@@ -144,17 +142,17 @@ class StatusViewController: UIViewController {
         self.navigationController?.pushViewController( ChooseViewController(), animated: true)
     }
     
+    override func viewDidDisappear(_ animated: Bool) {
+        Queue.userLocationFound = false
+    }
+    
     
     override func viewDidAppear(_ animated: Bool) {
-        
+        print("View did appear")
         ref = Database.database().reference()
-
-        let user = Auth.auth().currentUser
         
-        self.count = -1;
-        self.found = false
-
-
+        print(user?.displayName)
+        //Queue Name
         if(user?.displayName != nil){
             queueNameLabel.text = (user?.displayName)!
             queueNameLabel.backgroundColor=UIColor.blue
@@ -165,49 +163,55 @@ class StatusViewController: UIViewController {
             queueNameLabel.backgroundColor=UIColor.lightGray
             queueNameLabel.textColor=UIColor.black
         }
-        
-        {
-        
-        if(user?.displayName != nil){
-            if (Queue.userLocationFound != true){
-                myList.removeAll()
-                handle = ref?.child("Queues").child((user?.displayName!)!).observe(.childAdded, with: { (snapshot) in
-                    //Adding keys to myList instead of the values now to allow for easy deleting of top person
-                    if let item = snapshot.value as! String? {
-                        
-                        if(item == user?.email) {
-                            self.queueLocationLabel.text = String(self.myList.count-1)
-                            Queue.userLocationFound = true
-                        }
-                        if (!Queue.userLocationFound){
-                            self.myList.append(item)
-                        }
-                        
-                    }
-                })
-                
-                handle2 = ref?.child("Queues").child((user?.displayName!)!).observe(.childRemoved, with: { (snapshot) in
-                    //Adding keys to myList instead of the values now to allow for easy deleting of top person
-                    if let item = snapshot.value as! String? {
-                        
-                        if let index = self.myList.index(of: item) {
-                            self.myList.remove(at:index)
-                            self.queueLocationLabel.text = String(self.myList.count-1)
-                            print(self.myList)
-                            
-                        }
-                        
-                    }
-                })
-            }
-        })
-      
 
+        //Queue Location
+        if(user?.displayName != nil){
+            handleDatabase()
         }
-    
+        else{
+            queueLocationLabel.text = "..."
+            queueLocationLabel.textColor=UIColor.black
+            queueLocationLabel.backgroundColor=UIColor.lightGray
         }
- 
+        super.viewDidAppear(true)
+        
+    }
     
+    
+    func handleDatabase(){
+        queueLocationLabel.textColor=UIColor.white
+        queueLocationLabel.backgroundColor=UIColor.blue
+        if (Queue.userLocationFound != true){
+            myList.removeAll()
+            handle = ref?.child("Queues").child((user?.displayName!)!).observe(.childAdded, with: { (snapshot) in
+                //Adding keys to myList instead of the values now to allow for easy deleting of top person
+                if let item = snapshot.value as! String? {
+                    
+                    if(item == self.user?.email) {
+                        self.queueLocationLabel.text = String(self.myList.count-1)
+                        Queue.userLocationFound = true
+                    }
+                    if (!Queue.userLocationFound){
+                        self.myList.append(item)
+                    }
+                    
+                }
+            })
+            
+            handle2 = ref?.child("Queues").child((user?.displayName!)!).observe(.childRemoved, with: { (snapshot) in
+                if let item = snapshot.value as! String? {
+                    
+                    if let index = self.myList.index(of: item) {
+                        self.myList.remove(at:index)
+                        self.queueLocationLabel.text = String(self.myList.count-1)
+                        print(self.myList)
+                        
+                    }
+                    
+                }
+            })
+        }
+        
     }
     
     /*

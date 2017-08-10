@@ -91,7 +91,7 @@ class ChooseViewController: UIViewController, UITableViewDataSource, UITableView
         Queue.chosenQueue = chosenOne
         self.navigationController?.pushViewController( QueueViewController(), animated: true)
         tableView.deselectRow(at: indexPath, animated: true)
-        Queue.queueID = chosenOne
+        //Queue.queueID = chosenOne
 
     }
     

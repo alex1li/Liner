@@ -29,6 +29,10 @@ class QueueViewController: UIViewController {
     var peopleAheadLabel: UILabel!
     
     let user = Auth.auth().currentUser
+    var alreadyInQueue: String?
+    var queueStatusChanged: Bool = false
+    var changeRequest: UserProfileChangeRequest?
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -70,8 +74,6 @@ class QueueViewController: UIViewController {
             inThisQueue = true
             self.view.backgroundColor = .blue
         }
-        
-        
         handle2 = ref?.child("Queues").child(thisQueue!).observe(.childRemoved, with: { (snapshot) in
             //Adding keys to myList instead of the values now to allow for easy deleting of top person
             if (snapshot.key as String?) != nil {
@@ -82,12 +84,21 @@ class QueueViewController: UIViewController {
                 print(self.myList.count)
             }
         })
+        
+        if (user?.displayName != nil){
+            alreadyInQueue = user?.displayName
+        }
+        changeRequest = (user?.createProfileChangeRequest())!
+        changeRequest?.displayName = thisQueue
+        changeRequest?.commitChanges(completion: { (error) in})
+ 
     }
     
     
     func join(_ sender:Any){
         addChildToQueue(childName: (user?.email)!)
         Queue.userLocationFound = false
+        queueStatusChanged = true
         for  controller in (self.navigationController?.viewControllers)!{
             if controller.isKind(of: StatusViewController.self){
                 self.navigationController?.popToViewController(controller, animated: true)
@@ -100,22 +111,8 @@ class QueueViewController: UIViewController {
         let currentDateTime = Date()
         
         let user = Auth.auth().currentUser
-
-        
         ref?.child("Queues").child(thisQueue!).child(String(describing: currentDateTime)).setValue(user?.email)
-        
-        ref?.child("Queues").child(thisQueue!).child(String(describing: currentDateTime)).setPriority(myList.count)
-        
-        
-        
-        let changeRequest = user?.createProfileChangeRequest()
-        changeRequest?.displayName = Queue.queueID
-        
-        changeRequest?.commitChanges(completion: { (error) in
-            
-        })
-        
-        Auth.auth().currentUser?.createProfileChangeRequest().displayName = Queue.queueID
+        //ref?.child("Queues").child(thisQueue!).child(String(describing: currentDateTime)).setPriority(myList.count+1)
         
     }
     
@@ -126,6 +123,11 @@ class QueueViewController: UIViewController {
     
     override func viewDidDisappear(_ animated: Bool) {
         ref?.child("Queues").child(thisQueue!).removeAllObservers()
+        if (!queueStatusChanged){
+            changeRequest = (user?.createProfileChangeRequest())!
+            changeRequest?.displayName = alreadyInQueue
+            changeRequest?.commitChanges(completion: { (error) in})
+        }
     }
 
     
