@@ -17,6 +17,7 @@ class QueueViewController: UIViewController {
     var handle: DatabaseHandle?
     var handle2: DatabaseHandle?
     var ref: DatabaseReference?
+    var personList:[String] = []
     
     var inThisQueue = false
     var thisQueue = Queue.chosenQueue
@@ -64,6 +65,9 @@ class QueueViewController: UIViewController {
                 self.peopleAheadLabel.text = String(self.peopleAhead)
                 //self.waitLabel.text = String(self.peopleAhead*5) + "min"
                 //Queue.queues.append(item)
+                
+
+
             }
         })
         if (Queue.linesJoined.contains(thisQueue!)){
@@ -91,8 +95,16 @@ class QueueViewController: UIViewController {
     
     func addChildToQueue(childName: String){
         let currentDateTime = Date()
-        ref?.child("Queues").child(thisQueue!).child(String(describing: currentDateTime)).setValue(childName)
+        
         let user = Auth.auth().currentUser
+
+        
+        ref?.child("Queues").child(thisQueue!).child(String(describing: currentDateTime)).setValue(user?.email)
+        
+        ref?.child("Queues").child(thisQueue!).child(String(describing: currentDateTime)).setPriority(myList.count)
+        
+        
+        
         let changeRequest = user?.createProfileChangeRequest()
         changeRequest?.displayName = Queue.queueID
         
@@ -108,6 +120,8 @@ class QueueViewController: UIViewController {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }
+    
+
     
     
     /*
