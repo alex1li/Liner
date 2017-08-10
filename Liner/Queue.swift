@@ -17,6 +17,8 @@ class Queue {
     static var queues = [String]()
     static var chosenQueue:String?
     static var linesJoined = [String]()
+    static var queueID: String?
+
     
     
     //MARK: Initialization
