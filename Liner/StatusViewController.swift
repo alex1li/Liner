@@ -67,18 +67,6 @@ class StatusViewController: UIViewController {
         queueNameLabel.textAlignment = .center
         queueNameLabel.numberOfLines=1
         queueNameLabel.font=UIFont.systemFont(ofSize: 30)
-        /*
-        if(user?.displayName != nil){
-            queueNameLabel.text = (user?.displayName)!
-            queueNameLabel.backgroundColor=UIColor.blue
-            queueNameLabel.textColor=UIColor.white
-        }
-        else {
-           queueNameLabel.text = "..."
-            queueNameLabel.backgroundColor=UIColor.lightGray
-            queueNameLabel.textColor=UIColor.black
-        }
-        */
         self.view.addSubview(queueNameLabel)
         
         //Queue location label
@@ -87,42 +75,6 @@ class StatusViewController: UIViewController {
         queueLocationLabel.textAlignment = .center
         queueLocationLabel.numberOfLines=1
         queueLocationLabel.font=UIFont.systemFont(ofSize: 30)
-        if(user?.displayName != nil){
-            //handleDatabase()
-            /*
-            handle = ref?.child("Queues").child((user?.displayName!)!).observe(.childAdded, with: { (snapshot) in
-                //Adding keys to myList instead of the values now to allow for easy deleting of top person
-                if let item = snapshot.value as! String? {
-                    
-                    if(item == self.user?.email) {
-                        self.queueLocationLabel.text = String(self.myList.count-1)
-                        Queue.userLocationFound = true
-                    }
-
-                    if (!Queue.userLocationFound){
-                        self.myList.append(item)
-                    }
-                }
-            })
-            
-            handle2 = ref?.child("Queues").child((user?.displayName!)!).observe(.childRemoved, with: { (snapshot) in
-                //Adding keys to myList instead of the values now to allow for easy deleting of top person
-                if let item = snapshot.value as! String? {
-                    
-                        if let index = self.myList.index(of: item) {
-                        self.myList.remove(at:index)
-                            self.queueLocationLabel.text = String(self.myList.count-1)
-                            print(self.myList)
-
-                        }
-
-                }
-            })
-            */
-
-        }
-            
-        
         
         self.view.addSubview(queueLocationLabel)
         
