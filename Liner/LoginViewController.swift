@@ -75,6 +75,8 @@ class LoginViewController: UIViewController {
                         password.text = ""
                         return
                     }
+                    //Store it so it can be accessed again later
+                    //Queue.statusViewController = StatusViewController()
                     self.navigationController?.pushViewController( StatusViewController(), animated: true)
                     self.createAlert(title: "Login Success", message: "You're Successfully Logged In")
                     email.text = ""

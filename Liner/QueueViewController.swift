@@ -87,6 +87,12 @@ class QueueViewController: UIViewController {
     
     func join(_ sender:Any){
         addChildToQueue(childName: (user?.email)!)
+        Queue.userLocationFound = false
+        for  controller in (self.navigationController?.viewControllers)!{
+            if controller.isKind(of: StatusViewController.self){
+                self.navigationController?.popToViewController(controller, animated: true)
+            }
+        }
         print("Joined Queue")
     }
     
@@ -118,6 +124,9 @@ class QueueViewController: UIViewController {
         // Dispose of any resources that can be recreated.
     }
     
+    override func viewDidDisappear(_ animated: Bool) {
+        ref?.child("Queues").child(thisQueue!).removeAllObservers()
+    }
 
     
     
