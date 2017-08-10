@@ -44,7 +44,7 @@ class QueueViewController: UIViewController {
         joinButton = UIButton(frame: CGRect(x: 60, y: 200, width: 300, height: 300))
         joinButton.setTitle("Join", for: .normal)
         joinButton.addTarget(self, action:#selector(join), for: .touchUpInside)
-        joinButton.titleLabel?.textColor = .red
+        joinButton.titleLabel?.textColor = .green
         joinButton.setTitleColor(.red, for: .normal)
         joinButton.titleLabel!.font = UIFont(name:"Avenir", size:30)
         joinButton.titleLabel!.textAlignment = .left
@@ -111,6 +111,7 @@ class QueueViewController: UIViewController {
         while(user?.displayName != thisQueue){
             print("waiting")
         }
+        activityIndicator.stopAnimating()
         for  controller in (self.navigationController?.viewControllers)!{
             if controller.isKind(of: StatusViewController.self){
                 self.navigationController?.popToViewController(controller, animated: true)

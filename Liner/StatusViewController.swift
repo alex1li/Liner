@@ -12,7 +12,7 @@ import FirebaseAuth
 
 class StatusViewController: UIViewController {
     
-    //MARK: Components
+    //MARK: Display Components
     var yourQueueLabel:UILabel!
     var yourLocationLabel:UILabel!
     var queueNameLabel:UILabel!
@@ -22,8 +22,14 @@ class StatusViewController: UIViewController {
     var handle: DatabaseHandle?
     var handle2: DatabaseHandle?
     var ref: DatabaseReference?
-    var count: Int!
-    var found: Bool!
+    //var count: Int!
+    //var found: Bool!
+    
+    //MARK: Leave variables
+    var leaveButton: UIButton!
+    var myKey: String!
+    var changeRequest: UserProfileChangeRequest?
+    var activityIndicator:UIActivityIndicatorView = UIActivityIndicatorView()
     
     var myList:[String] = []
     
@@ -37,7 +43,16 @@ class StatusViewController: UIViewController {
         view.backgroundColor = .white
         
         ref = Database.database().reference()
-        //let user = Auth.auth().currentUser
+        
+        //Leave button
+        leaveButton = UIButton(frame: CGRect(x: 50, y: 550, width: 100, height: 100))
+        leaveButton.setTitle("Leave", for: .normal)
+        leaveButton.addTarget(self, action:#selector(leave), for: .touchUpInside)
+        leaveButton.titleLabel?.textColor = .red
+        leaveButton.setTitleColor(.red, for: .normal)
+        leaveButton.titleLabel!.font = UIFont(name:"Avenir", size:30)
+        leaveButton.titleLabel!.textAlignment = .left
+        view.addSubview(leaveButton)
         
         //Your Queue Label
         yourQueueLabel = UILabel()
@@ -76,6 +91,12 @@ class StatusViewController: UIViewController {
         queueLocationLabel.numberOfLines=1
         queueLocationLabel.font=UIFont.systemFont(ofSize: 30)
         
+        //loading indicator
+        activityIndicator.center = self.view.center
+        activityIndicator.hidesWhenStopped = true
+        activityIndicator.activityIndicatorViewStyle = UIActivityIndicatorViewStyle.gray
+        view.addSubview(activityIndicator)
+        
         self.view.addSubview(queueLocationLabel)
         
         navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Join", style: .plain, target: self, action: #selector(joinQueue))
@@ -102,10 +123,11 @@ class StatusViewController: UIViewController {
     override func viewDidAppear(_ animated: Bool) {
         print("View did appear")
         ref = Database.database().reference()
-        
         print(user?.displayName)
+        
         //Queue Name
-        if(user?.displayName != nil){
+        if(user?.displayName != nil && user?.displayName != ""){
+            leaveButton.isEnabled = true
             queueNameLabel.text = (user?.displayName)!
             queueNameLabel.backgroundColor=UIColor.blue
             queueNameLabel.textColor=UIColor.white
@@ -117,7 +139,7 @@ class StatusViewController: UIViewController {
         }
 
         //Queue Location
-        if(user?.displayName != nil){
+        if(user?.displayName != nil && user?.displayName != ""){
             handleDatabase()
         }
         else{
@@ -142,6 +164,10 @@ class StatusViewController: UIViewController {
                     if(item == self.user?.email) {
                         self.queueLocationLabel.text = String(self.myList.count-1)
                         Queue.userLocationFound = true
+                        if (snapshot.key as String?) != nil{
+                            print(snapshot.key)
+                            self.myKey = snapshot.key
+                        }
                     }
                     if (!Queue.userLocationFound){
                         self.myList.append(item)
@@ -164,6 +190,27 @@ class StatusViewController: UIViewController {
             })
         }
         
+    }
+    
+    func leave(_ sender:Any){
+        activityIndicator.startAnimating()
+        ref?.child("Queues").child((user?.displayName!)!).child(myKey).setValue(nil)
+        changeRequest = (user?.createProfileChangeRequest())!
+        changeRequest?.displayName = ""
+        changeRequest?.commitChanges(completion: { (error) in})
+        while(user?.displayName != ""){
+            print("waiting")
+        }
+        print(user?.displayName)
+        activityIndicator.stopAnimating()
+        print("left queue")
+        queueLocationLabel.text = "..."
+        queueLocationLabel.textColor=UIColor.black
+        queueLocationLabel.backgroundColor=UIColor.lightGray
+        queueNameLabel.text = "..."
+        queueNameLabel.backgroundColor=UIColor.lightGray
+        queueNameLabel.textColor=UIColor.black
+        leaveButton.isEnabled = false
     }
     
     /*
