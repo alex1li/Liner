@@ -9,6 +9,7 @@ target 'Liner' do
 pod 'Firebase/Core'
 pod 'Firebase/Auth'
 pod 'Firebase/Database'
+pod 'DLRadioButton', '~> 1.4'
 
   target 'LinerTests' do
     inherit! :search_paths

@@ -132,8 +132,12 @@ class StatusViewController: UIViewController {
         let user = Auth.auth().currentUser
         
         self.count = -1;
+        self.found = false
 
+
+        if(user?.displayName != nil)
         
+        {
         
         handle = ref?.child("Queues").child((user?.displayName!)!).observe(.childAdded, with: { (snapshot) in
             //Adding keys to myList instead of the values now to allow for easy deleting of top person
@@ -158,7 +162,7 @@ class StatusViewController: UIViewController {
         })
       
 
-        
+        }
     
     
     }
