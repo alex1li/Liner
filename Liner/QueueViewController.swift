@@ -12,7 +12,7 @@ import FirebaseDatabase
 import FirebaseAuth
 
 class QueueViewController: UIViewController {
-
+    
     var myList:[String] = []
     var handle: DatabaseHandle?
     var handle2: DatabaseHandle?
@@ -33,7 +33,7 @@ class QueueViewController: UIViewController {
         super.viewDidLoad()
         self.title = thisQueue
         view.backgroundColor = .white
-
+        
         joinButton = UIButton(frame: CGRect(x: 60, y: 200, width: 300, height: 300))
         joinButton.setTitle("Join", for: .normal)
         joinButton.addTarget(self, action:#selector(join), for: .touchUpInside)
@@ -52,10 +52,10 @@ class QueueViewController: UIViewController {
         peopleAheadLabel.font=UIFont.systemFont(ofSize: 52)
         peopleAheadLabel.backgroundColor=UIColor.lightGray
         view.addSubview(peopleAheadLabel)
-
+        
         
         ref = Database.database().reference()
- 
+        
         handle = ref?.child("Queues").child(thisQueue!).observe(.childAdded, with: { (snapshot) in
             //Adding keys to myList instead of the values now to allow for easy deleting of top person
             if let item = snapshot.key as String? {
@@ -70,8 +70,8 @@ class QueueViewController: UIViewController {
             inThisQueue = true
             self.view.backgroundColor = .white
         }
- 
- 
+        
+        
         handle2 = ref?.child("Queues").child(thisQueue!).observe(.childRemoved, with: { (snapshot) in
             //Adding keys to myList instead of the values now to allow for easy deleting of top person
             if (snapshot.key as String?) != nil {
@@ -83,7 +83,7 @@ class QueueViewController: UIViewController {
             }
         })
     }
-
+    
     
     func join(_ sender:Any){
         addChildToQueue(childName: (user?.email)!)
@@ -92,6 +92,16 @@ class QueueViewController: UIViewController {
     func addChildToQueue(childName: String){
         let currentDateTime = Date()
         ref?.child("Queues").child(thisQueue!).child(String(describing: currentDateTime)).setValue(childName)
+        let user = Auth.auth().currentUser
+        let changeRequest = user?.createProfileChangeRequest()
+        changeRequest?.displayName = Queue.queueID
+        
+        changeRequest?.commitChanges(completion: { (error) in
+            
+        })
+        
+        Auth.auth().currentUser?.createProfileChangeRequest().displayName = Queue.queueID
+        
     }
     
     override func didReceiveMemoryWarning() {
@@ -99,15 +109,15 @@ class QueueViewController: UIViewController {
         // Dispose of any resources that can be recreated.
     }
     
-
+    
     /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destinationViewController.
-        // Pass the selected object to the new view controller.
-    }
-    */
-
+     // MARK: - Navigation
+     
+     // In a storyboard-based application, you will often want to do a little preparation before navigation
+     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+     // Get the new view controller using segue.destinationViewController.
+     // Pass the selected object to the new view controller.
+     }
+     */
+    
 }
