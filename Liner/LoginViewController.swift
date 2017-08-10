@@ -41,11 +41,6 @@ class LoginViewController: UIViewController {
         managerButton.isHidden = true
         customerButton.isHidden = true
         
-
-        
-        
-
-        
         view.backgroundColor = .blue
         
         let items = ["Login", "Signup"]
