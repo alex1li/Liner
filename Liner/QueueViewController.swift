@@ -32,6 +32,7 @@ class QueueViewController: UIViewController {
     var alreadyInQueue: String?
     var queueStatusChanged: Bool = false
     var changeRequest: UserProfileChangeRequest?
+    var activityIndicator:UIActivityIndicatorView = UIActivityIndicatorView()
     
     
     override func viewDidLoad() {
@@ -39,6 +40,7 @@ class QueueViewController: UIViewController {
         self.title = thisQueue
         view.backgroundColor = .white
         
+        //Join button
         joinButton = UIButton(frame: CGRect(x: 60, y: 200, width: 300, height: 300))
         joinButton.setTitle("Join", for: .normal)
         joinButton.addTarget(self, action:#selector(join), for: .touchUpInside)
@@ -48,6 +50,7 @@ class QueueViewController: UIViewController {
         joinButton.titleLabel!.textAlignment = .left
         view.addSubview(joinButton)
         
+        //People in line label
         peopleAheadLabel = UILabel()
         peopleAheadLabel.frame = CGRect(x: 100, y: 100, width: 200, height: 200)
         peopleAheadLabel.textAlignment = .center
@@ -57,6 +60,12 @@ class QueueViewController: UIViewController {
         peopleAheadLabel.font=UIFont.systemFont(ofSize: 52)
         peopleAheadLabel.backgroundColor=UIColor.lightGray
         view.addSubview(peopleAheadLabel)
+        
+        //loading indicator
+        activityIndicator.center = self.view.center
+        activityIndicator.hidesWhenStopped = true
+        activityIndicator.activityIndicatorViewStyle = UIActivityIndicatorViewStyle.gray
+        view.addSubview(activityIndicator)
         
         
         ref = Database.database().reference()
@@ -88,17 +97,20 @@ class QueueViewController: UIViewController {
         if (user?.displayName != nil){
             alreadyInQueue = user?.displayName
         }
-        changeRequest = (user?.createProfileChangeRequest())!
-        changeRequest?.displayName = thisQueue
-        changeRequest?.commitChanges(completion: { (error) in})
  
     }
     
     
     func join(_ sender:Any){
+        activityIndicator.startAnimating()
         addChildToQueue(childName: (user?.email)!)
+        changeRequest = (user?.createProfileChangeRequest())!
+        changeRequest?.displayName = thisQueue
+        changeRequest?.commitChanges(completion: { (error) in})
         Queue.userLocationFound = false
-        queueStatusChanged = true
+        while(user?.displayName != thisQueue){
+            print("waiting")
+        }
         for  controller in (self.navigationController?.viewControllers)!{
             if controller.isKind(of: StatusViewController.self){
                 self.navigationController?.popToViewController(controller, animated: true)
@@ -123,11 +135,6 @@ class QueueViewController: UIViewController {
     
     override func viewDidDisappear(_ animated: Bool) {
         ref?.child("Queues").child(thisQueue!).removeAllObservers()
-        if (!queueStatusChanged){
-            changeRequest = (user?.createProfileChangeRequest())!
-            changeRequest?.displayName = alreadyInQueue
-            changeRequest?.commitChanges(completion: { (error) in})
-        }
     }
 
     
