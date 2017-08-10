@@ -21,7 +21,7 @@ class StatusViewController: UIViewController {
     override func viewDidLoad() {
         view.backgroundColor = .white
         
-        label.center = CGPoint(x: 160, y: 285)
+        label.center = CGPoint(x: 200, y: 300)
         label.font = UIFont.preferredFont(forTextStyle: .footnote)
         label.textColor = .black
         label.textAlignment = .center
