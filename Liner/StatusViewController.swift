@@ -13,7 +13,11 @@ import FirebaseAuth
 class StatusViewController: UIViewController {
     
     //MARK: Components
-    let label = UILabel(frame: CGRect(x: 0, y: 0, width: 500, height: 21))
+    var yourQueueLabel:UILabel!
+    var yourLocationLabel:UILabel!
+    var queueNameLabel:UILabel!
+    var queueLocationLabel:UILabel!
+    
     var tableView: UITableView!
     var handle: DatabaseHandle?
     var handle2: DatabaseHandle?
@@ -30,42 +34,71 @@ class StatusViewController: UIViewController {
         view.backgroundColor = .white
         
         ref = Database.database().reference()
-
-        
-        label.center = CGPoint(x: 200, y: 300)
-        label.font = UIFont.preferredFont(forTextStyle: .footnote)
-        label.textColor = .black
-        label.textAlignment = .center
-        label.text = "You are not in a Queue"
-        
         let user = Auth.auth().currentUser
+        
+        //Your Queue Label
+        yourQueueLabel = UILabel()
+        yourQueueLabel.frame = CGRect(x: 100, y: 50, width: 200, height: 200)
+        yourQueueLabel.textAlignment = .center
+        yourQueueLabel.numberOfLines=1
+        yourQueueLabel.text = "Queue"
+        yourQueueLabel.textColor=UIColor.black
+        yourQueueLabel.font=UIFont.systemFont(ofSize: 20)
+        yourQueueLabel.backgroundColor=UIColor.white
+        self.view.addSubview(yourQueueLabel)
+        
+        //Your Location Label
+        //Your Queue Label
+        yourLocationLabel = UILabel()
+        yourLocationLabel.frame = CGRect(x: 100, y: 300, width: 200, height: 200)
+        yourLocationLabel.textAlignment = .center
+        yourLocationLabel.numberOfLines=1
+        yourLocationLabel.text = "Location"
+        yourLocationLabel.textColor=UIColor.black
+        yourLocationLabel.font=UIFont.systemFont(ofSize: 20)
+        yourLocationLabel.backgroundColor=UIColor.white
+        self.view.addSubview(yourLocationLabel)
+        
+        //Queue name Label
+        queueNameLabel = UILabel()
+        queueNameLabel.frame = CGRect(x: 50, y: 180, width: 300, height: 100)
+        queueNameLabel.textAlignment = .center
+        queueNameLabel.numberOfLines=1
+        queueNameLabel.font=UIFont.systemFont(ofSize: 30)
         if(user?.displayName != nil){
-            label.text =  "You are in queue: " + (user?.displayName)!
-            
-            //self.count = -1;
-            self.found = false
+            queueNameLabel.text = (user?.displayName)!
+            queueNameLabel.backgroundColor=UIColor.blue
+            queueNameLabel.textColor=UIColor.white
+        }
+        else {
+           queueNameLabel.text = "..."
+            queueNameLabel.backgroundColor=UIColor.lightGray
+            queueNameLabel.textColor=UIColor.black
+        }
+        self.view.addSubview(queueNameLabel)
+        
+        //Queue location label
+        queueLocationLabel = UILabel()
+        queueLocationLabel.frame = CGRect(x: 50, y: 430, width: 300, height: 100)
+        queueLocationLabel.textAlignment = .center
+        queueLocationLabel.numberOfLines=1
+        queueLocationLabel.font=UIFont.systemFont(ofSize: 30)
+        if(user?.displayName != nil){
+            queueLocationLabel.textColor=UIColor.white
+            queueLocationLabel.backgroundColor=UIColor.blue
 
             handle = ref?.child("Queues").child((user?.displayName!)!).observe(.childAdded, with: { (snapshot) in
                 //Adding keys to myList instead of the values now to allow for easy deleting of top person
                 if let item = snapshot.value as! String? {
                     
-                    
-                    
                     if(item == user?.email) {
-                        self.label.text = "You are in queue " + (user?.displayName!)! + " with place: " + String(self.myList.count-1)
-                        self.found = true
+                        self.queueLocationLabel.text = String(self.myList.count-1)
+                        Queue.userLocationFound = true
                     }
 
-                    if (!self.found){
+                    if (!Queue.userLocationFound){
                         self.myList.append(item)
                     }
-                    
-                    
-
-                    //self.count = self.count + 1;
-                
-                    
-                    
                 }
             })
             
@@ -73,39 +106,26 @@ class StatusViewController: UIViewController {
                 //Adding keys to myList instead of the values now to allow for easy deleting of top person
                 if let item = snapshot.value as! String? {
                     
-                    
-                    
                         if let index = self.myList.index(of: item) {
                         self.myList.remove(at:index)
-                            self.label.text = "You are in queue " + (user?.displayName!)! + " with place: " + String(self.myList.count-1)
+                            self.queueLocationLabel.text = String(self.myList.count-1)
                             print(self.myList)
 
-                    
                         }
-                        
-                    
-                    
-                    //self.count = self.count + 1;
-                    
-                    
-                    
+
                 }
             })
 
         }
+        else{
+            queueLocationLabel.text = "..."
+            queueLocationLabel.textColor=UIColor.black
+            queueLocationLabel.backgroundColor=UIColor.lightGray
+        }
         
-        self.view.addSubview(label)
+        self.view.addSubview(queueLocationLabel)
         
         navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Join", style: .plain, target: self, action: #selector(joinQueue))
-        
-        
-
-        
-
-        
-        
-
-        
         
         super.viewDidLoad()
         
@@ -131,35 +151,52 @@ class StatusViewController: UIViewController {
 
         let user = Auth.auth().currentUser
         
-        self.count = -1;
-
+        if(user?.displayName != nil){
+            queueNameLabel.text = (user?.displayName)!
+            queueNameLabel.backgroundColor=UIColor.blue
+            queueNameLabel.textColor=UIColor.white
+        }
+        else {
+            queueNameLabel.text = "..."
+            queueNameLabel.backgroundColor=UIColor.lightGray
+            queueNameLabel.textColor=UIColor.black
+        }
         
         
-        handle = ref?.child("Queues").child((user?.displayName!)!).observe(.childAdded, with: { (snapshot) in
-            //Adding keys to myList instead of the values now to allow for easy deleting of top person
-            if let item = snapshot.value as! String? {
+        if(user?.displayName != nil){
+            if (Queue.userLocationFound != true){
+                myList.removeAll()
+                handle = ref?.child("Queues").child((user?.displayName!)!).observe(.childAdded, with: { (snapshot) in
+                    //Adding keys to myList instead of the values now to allow for easy deleting of top person
+                    if let item = snapshot.value as! String? {
+                        
+                        if(item == user?.email) {
+                            self.queueLocationLabel.text = String(self.myList.count-1)
+                            Queue.userLocationFound = true
+                        }
+                        if (!Queue.userLocationFound){
+                            self.myList.append(item)
+                        }
+                        
+                    }
+                })
                 
-                if (!self.found){
-                    self.myList.append(item)
-                }
-                
-                
-                if(item == user?.email) {
-                    self.label.text = "You are in queue " + (user?.displayName!)! + " with place: " + String(self.myList.count-1)
-                    self.found = true
-                }
-                
-                
-                //self.count = self.count + 1;
-                
-                
-                
+                handle2 = ref?.child("Queues").child((user?.displayName!)!).observe(.childRemoved, with: { (snapshot) in
+                    //Adding keys to myList instead of the values now to allow for easy deleting of top person
+                    if let item = snapshot.value as! String? {
+                        
+                        if let index = self.myList.index(of: item) {
+                            self.myList.remove(at:index)
+                            self.queueLocationLabel.text = String(self.myList.count-1)
+                            print(self.myList)
+                            
+                        }
+                        
+                    }
+                })
             }
-        })
-      
-
-        
-    
+        }
+ 
     
     }
     

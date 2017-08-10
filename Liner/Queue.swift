@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import UIKit
 
 class Queue {
     
@@ -18,6 +19,8 @@ class Queue {
     static var chosenQueue:String?
     static var linesJoined = [String]()
     static var queueID: String?
+    
+    static var userLocationFound: Bool = false
 
     
     
