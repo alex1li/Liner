@@ -151,6 +151,10 @@ class StatusViewController: UIViewController {
 
         let user = Auth.auth().currentUser
         
+        self.count = -1;
+        self.found = false
+
+
         if(user?.displayName != nil){
             queueNameLabel.text = (user?.displayName)!
             queueNameLabel.backgroundColor=UIColor.blue
@@ -162,6 +166,7 @@ class StatusViewController: UIViewController {
             queueNameLabel.textColor=UIColor.black
         }
         
+        {
         
         if(user?.displayName != nil){
             if (Queue.userLocationFound != true){
@@ -195,6 +200,11 @@ class StatusViewController: UIViewController {
                     }
                 })
             }
+        })
+      
+
+        }
+    
         }
  
     

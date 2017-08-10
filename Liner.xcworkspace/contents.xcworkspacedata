@@ -2,6 +2,9 @@
 <Workspace
    version = "1.0">
    <FileRef
+      location = "group:BetterSegmentedControl.swift">
+   </FileRef>
+   <FileRef
       location = "group:Liner.xcodeproj">
    </FileRef>
    <FileRef
