@@ -15,6 +15,10 @@ class StatusViewController: UIViewController {
     //MARK: Display Components
     var yourQueueLabel:UILabel!
     var yourLocationLabel:UILabel!
+    
+    //MARK: Dynamic components
+    let labelWidth = 300
+    let labelHeight = 100
     var queueNameLabel:UILabel!
     var queueLocationLabel:UILabel!
     
@@ -34,20 +38,18 @@ class StatusViewController: UIViewController {
     var myList:[String] = []
     
     var user = Auth.auth().currentUser
-
-    
     
     
     override func viewDidLoad() {
         print("View did load")
         view.backgroundColor = .white
         
-        self.title = user?.email
+        self.title = "Status"
         
         ref = Database.database().reference()
         
         //Leave button
-        leaveButton = UIButton(frame: CGRect(x: 50, y: 550, width: 100, height: 100))
+        leaveButton = UIButton(frame: CGRect(x: 10, y: 580, width: 100, height: 100))
         leaveButton.setTitle("Leave", for: .normal)
         leaveButton.addTarget(self, action:#selector(leave), for: .touchUpInside)
         leaveButton.titleLabel?.textColor = .red
@@ -55,6 +57,7 @@ class StatusViewController: UIViewController {
         leaveButton.titleLabel!.font = UIFont(name:"Avenir", size:30)
         leaveButton.titleLabel!.textAlignment = .left
         leaveButton.isEnabled = false
+        leaveButton.isHidden = true
         view.addSubview(leaveButton)
         
         //Your Queue Label
@@ -73,7 +76,7 @@ class StatusViewController: UIViewController {
         yourLocationLabel.frame = CGRect(x: 100, y: 300, width: 200, height: 200)
         yourLocationLabel.textAlignment = .center
         yourLocationLabel.numberOfLines=1
-        yourLocationLabel.text = "Location"
+        yourLocationLabel.text = "People Ahead"
         yourLocationLabel.textColor=UIColor.black
         yourLocationLabel.font=UIFont.systemFont(ofSize: 20)
         yourLocationLabel.backgroundColor=UIColor.white
@@ -81,7 +84,7 @@ class StatusViewController: UIViewController {
         
         //Queue name Label
         queueNameLabel = UILabel()
-        queueNameLabel.frame = CGRect(x: 50, y: 180, width: 300, height: 100)
+        queueNameLabel.frame = CGRect(x: 50, y: 180, width: labelWidth, height: labelHeight)
         queueNameLabel.textAlignment = .center
         queueNameLabel.numberOfLines=1
         queueNameLabel.font=UIFont.systemFont(ofSize: 30)
@@ -89,7 +92,7 @@ class StatusViewController: UIViewController {
         
         //Queue location label
         queueLocationLabel = UILabel()
-        queueLocationLabel.frame = CGRect(x: 50, y: 430, width: 300, height: 100)
+        queueLocationLabel.frame = CGRect(x: 50, y: 430, width: labelWidth, height: labelHeight)
         queueLocationLabel.textAlignment = .center
         queueLocationLabel.numberOfLines=1
         queueLocationLabel.font=UIFont.systemFont(ofSize: 30)
@@ -103,6 +106,8 @@ class StatusViewController: UIViewController {
         self.view.addSubview(queueLocationLabel)
         
         navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Join", style: .plain, target: self, action: #selector(joinQueue))
+        
+        navigationItem.leftBarButtonItem = UIBarButtonItem(title: "Log Out", style: .plain, target: self, action: #selector(logOut))
         
         super.viewDidLoad()
         
@@ -125,12 +130,14 @@ class StatusViewController: UIViewController {
     
     override func viewDidAppear(_ animated: Bool) {
         print("View did appear")
+        
         ref = Database.database().reference()
-        print(user?.displayName)
+        //print(user?.displayName)
         
         //Queue Name
         if(user?.displayName != nil && user?.displayName != ""){
             leaveButton.isEnabled = true
+            leaveButton.isHidden = false
             queueNameLabel.text = (user?.displayName)!
             queueNameLabel.backgroundColor=UIColor.blue
             queueNameLabel.textColor=UIColor.white
@@ -150,8 +157,25 @@ class StatusViewController: UIViewController {
             queueLocationLabel.textColor=UIColor.black
             queueLocationLabel.backgroundColor=UIColor.lightGray
         }
-        super.viewDidAppear(true)
         
+        UIView.animate(withDuration: 0.5, delay: 0.3, options: [],
+                       animations: {
+                        self.queueNameLabel.frame.size.width = CGFloat(self.labelWidth)
+                        self.queueNameLabel.frame.size.height = CGFloat(self.labelHeight)
+                        self.queueLocationLabel.frame.size.width = CGFloat(self.labelWidth)
+                        self.queueLocationLabel.frame.size.height = CGFloat(self.labelHeight)
+        }, 
+                       completion: nil
+        )
+        
+        super.viewDidAppear(true)
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        queueNameLabel.frame.size.width = 0;
+        queueNameLabel.frame.size.height = 0;
+        queueLocationLabel.frame.size.width = 0;
+        queueLocationLabel.frame.size.height = 0;
     }
     
     
@@ -196,6 +220,11 @@ class StatusViewController: UIViewController {
     }
     
     func leave(_ sender:Any){
+        self.createLeaveAlert(title: "Leave Confirmation", message: "You will leave this queue")
+        
+    }
+    
+    func leaveActions(){
         activityIndicator.startAnimating()
         ref?.child("Queues").child((user?.displayName!)!).child(myKey).setValue(nil)
         changeRequest = (user?.createProfileChangeRequest())!
@@ -204,7 +233,7 @@ class StatusViewController: UIViewController {
         while(user?.displayName != ""){
             print("waiting")
         }
-        print(user?.displayName)
+        //print(user?.displayName)
         activityIndicator.stopAnimating()
         print("left queue")
         
@@ -216,6 +245,23 @@ class StatusViewController: UIViewController {
         queueNameLabel.backgroundColor=UIColor.lightGray
         queueNameLabel.textColor=UIColor.black
         leaveButton.isEnabled = false
+        leaveButton.isHidden = true
+    }
+    
+    func logOut(){
+        self.navigationController?.popViewController(animated: true)
+    }
+    
+    func createLeaveAlert(title: String, message: String) {
+        let alert = UIAlertController(title: title, message: message, preferredStyle: UIAlertControllerStyle.alert)
+        alert.addAction(UIAlertAction(title: "Cancel", style: UIAlertActionStyle.default, handler: {(action) in
+            alert.dismiss(animated: true, completion: nil)
+        }))
+        alert.addAction(UIAlertAction(title: "Confirm", style: UIAlertActionStyle.default, handler: {(action) in
+            self.leaveActions()
+            alert.dismiss(animated: true, completion: nil)
+        }))
+        self.present(alert, animated: true, completion: nil)
     }
     
     /*
