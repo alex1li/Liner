@@ -44,8 +44,8 @@ class QueueViewController: UIViewController {
         joinButton = UIButton(frame: CGRect(x: 60, y: 200, width: 300, height: 300))
         joinButton.setTitle("Join", for: .normal)
         joinButton.addTarget(self, action:#selector(join), for: .touchUpInside)
-        joinButton.titleLabel?.textColor = .green
-        joinButton.setTitleColor(.red, for: .normal)
+        //joinButton.titleLabel?.textColor = .green
+        joinButton.setTitleColor(.green, for: .normal)
         joinButton.titleLabel!.font = UIFont(name:"Avenir", size:30)
         joinButton.titleLabel!.textAlignment = .left
         view.addSubview(joinButton)
@@ -102,12 +102,11 @@ class QueueViewController: UIViewController {
     
     
     func join(_ sender:Any){
+        self.createAlert(title: "Join Confirmation", message: "Do you want to join this queue?")
+    }
+    
+    func confirmPressed(){
         activityIndicator.startAnimating()
-        addChildToQueue(childName: (user?.email)!)
-        changeRequest = (user?.createProfileChangeRequest())!
-        changeRequest?.displayName = thisQueue
-        changeRequest?.commitChanges(completion: { (error) in})
-        Queue.userLocationFound = false
         while(user?.displayName != thisQueue){
             print("waiting")
         }
@@ -120,13 +119,19 @@ class QueueViewController: UIViewController {
         print("Joined Queue")
     }
     
+    func updateUserInfo(){
+        changeRequest = (user?.createProfileChangeRequest())!
+        changeRequest?.displayName = thisQueue
+        changeRequest?.commitChanges(completion: { (error) in})
+        Queue.userLocationFound = false
+        
+    }
+    
     func addChildToQueue(childName: String){
         let currentDateTime = Date()
-        
         let user = Auth.auth().currentUser
         ref?.child("Queues").child(thisQueue!).child(String(describing: currentDateTime)).setValue(user?.email)
         //ref?.child("Queues").child(thisQueue!).child(String(describing: currentDateTime)).setPriority(myList.count+1)
-        
     }
     
     override func didReceiveMemoryWarning() {
@@ -136,6 +141,21 @@ class QueueViewController: UIViewController {
     
     override func viewDidDisappear(_ animated: Bool) {
         ref?.child("Queues").child(thisQueue!).removeAllObservers()
+    }
+    
+    func createAlert(title: String, message: String) {
+        let alert = UIAlertController(title: title, message: message, preferredStyle: UIAlertControllerStyle.alert)
+        alert.addAction(UIAlertAction(title: "Cancel", style: UIAlertActionStyle.default, handler: {(action) in
+            alert.dismiss(animated: true, completion: nil)
+        }))
+        alert.addAction(UIAlertAction(title: "Confirm", style: UIAlertActionStyle.default, handler: {(action) in
+            self.addChildToQueue(childName: (self.user?.email)!)
+            self.updateUserInfo()
+            alert.dismiss(animated: true, completion: nil)
+            self.confirmPressed()
+            
+        }))
+        self.present(alert, animated: true, completion: nil)
     }
 
     

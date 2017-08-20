@@ -115,13 +115,13 @@ class LoginViewController: UIViewController {
                     //Store it so it can be accessed again later
                     //Queue.statusViewController = StatusViewController()
                     self.navigationController?.pushViewController( StatusViewController(), animated: true)
-                    self.createAlert(title: "Login Success", message: "You're Successfully Logged In")
+                    //self.createAlert(title: "Login Success", message: "You're Successfully Logged In")
                     email.text = ""
                     password.text = ""
                                        
         
-                    self.navigationController?.pushViewController(StatusViewController(), animated: true)
-                    self.createAlert(title: "Login Success", message: "You have successfully logged in")
+                    //self.navigationController?.pushViewController(StatusViewController(), animated: true)
+                    //self.createAlert(title: "Login Success", message: "You have successfully logged in")
                   //  email.text = ""
                    // password.text = ""
                 }
@@ -199,16 +199,9 @@ class LoginViewController: UIViewController {
         let alert = UIAlertController(title: title, message: message, preferredStyle: UIAlertControllerStyle.alert)
         alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.default, handler: {(action) in
             alert.dismiss(animated: true, completion: nil)
-            
-            
         }))
         
-        
-        
         self.present(alert, animated: true, completion: nil)
-        
-        
-        
     }
     
     
@@ -235,18 +228,12 @@ class LoginViewController: UIViewController {
         { loginbutton.setTitle("Signup", for: .normal)
             managerButton.isHidden = false
             customerButton.isHidden = false
-
-            
         }
-
         if(switcher.selectedSegmentIndex == 0) {
             loginbutton.setTitle("Login", for: .normal)
             managerButton.isHidden = true
             customerButton.isHidden = true
-
         }
-
-        
     }
     
     /*

@@ -57,6 +57,7 @@
 		C2BBF2470BE5BC62D9167292 /* Pods-Liner.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Liner.release.xcconfig"; path = "Pods/Target Support Files/Pods-Liner/Pods-Liner.release.xcconfig"; sourceTree = "<group>"; };
 		FF35AAA41F3C2AB300B18267 /* ManagerViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ManagerViewController.swift; sourceTree = "<group>"; };
 		FFF4B09F1F49E0A7007FD872 /* ManagerCreateQueueController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ManagerCreateQueueController.swift; sourceTree = "<group>"; };
+
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -125,8 +126,10 @@
 				5ADF7C801F3910FA00ADDFA8 /* AppDelegate.swift */,
 				5ADF7CA51F39459A00ADDFA8 /* LoginViewController.swift */,
 				5ADF7CA71F3945D400ADDFA8 /* StatusViewController.swift */,
+
 				FFF4B09F1F49E0A7007FD872 /* ManagerCreateQueueController.swift */,
 				FF35AAA41F3C2AB300B18267 /* ManagerViewController.swift */,
+
 				5ADF7CAD1F3B3E2100ADDFA8 /* ChooseViewController.swift */,
 				5ADF7CB51F3B46EB00ADDFA8 /* Queue.swift */,
 				5ADF7CB31F3B412800ADDFA8 /* QueueViewController.swift */,
