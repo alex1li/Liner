@@ -11,20 +11,18 @@ import Firebase
 import FirebaseAuth
 import DLRadioButton
 
-var switcher: UISegmentedControl!
-var email: UITextField!
-var password: UITextField!
-var loginbutton: UIButton!
-var managerButton: DLRadioButton!
-var customerButton: DLRadioButton!
-var otherButton: [DLRadioButton]! = []
 
-
-
-
-var error = 2
-
-class LoginViewController: UIViewController {
+class LoginViewController: UIViewController, UITextFieldDelegate {
+    
+    var switcher: UISegmentedControl!
+    var email: UITextField!
+    var password: UITextField!
+    var loginbutton: UIButton!
+    var managerButton: DLRadioButton!
+    var customerButton: DLRadioButton!
+    var otherButton: [DLRadioButton]! = []
+    
+    var error = 2
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -41,7 +39,7 @@ class LoginViewController: UIViewController {
         managerButton.isHidden = true
         customerButton.isHidden = true
         
-        view.backgroundColor = .blue
+        view.backgroundColor = .white
         
         let items = ["Login", "Signup"]
         
@@ -53,19 +51,21 @@ class LoginViewController: UIViewController {
 
         view.addSubview(switcher)
         
-        email = UITextField(frame: CGRect(x: 30, y: 150,width: 340, height: 40))
-        email.backgroundColor = .white
+        email = UITextField(frame: CGRect(x: 30, y: 230,width: 320, height: 40))
+        email.borderStyle = UITextBorderStyle.roundedRect
+        //email.backgroundColor = .white
         view.addSubview(email)
         
-        password = UITextField(frame: CGRect(x: 30, y: 220,width: 340, height: 40))
+        password = UITextField(frame: CGRect(x: 30, y: 300,width: 320, height: 40))
         password.isSecureTextEntry = true
-        password.backgroundColor = .white
+        password.borderStyle = UITextBorderStyle.roundedRect
+        //password.backgroundColor = .white
         view.addSubview(password)
         
-        loginbutton = UIButton(frame: CGRect(x: 150, y: 400, width: 100, height: 20))
+        loginbutton = UIButton(frame: CGRect(x: 150, y: 400, width: 100, height: 50))
         loginbutton.setTitle("Login", for: .normal)
-        loginbutton.backgroundColor = .white
-        loginbutton.setTitleColor(.black, for: .normal)
+        loginbutton.backgroundColor = .blue
+        loginbutton.setTitleColor(.white, for: .normal)
         loginbutton.addTarget(self, action:#selector(login), for: .touchUpInside)
         
         
@@ -95,8 +95,8 @@ class LoginViewController: UIViewController {
                 Auth.auth().signIn(withEmail: username, password: pass) { (user, error) in
                     if let error = error {
                         self.createAlert(title: "Login Error", message: "Sorry you're not signed up!")
-                  //      email.text = ""
-                   //     password.text = ""
+                        //      email.text = ""
+                        //     password.text = ""
                         return
                     }
                     
@@ -105,10 +105,10 @@ class LoginViewController: UIViewController {
                     print(user?.photoURL?.absoluteString)
                     if(user?.photoURL?.absoluteString == "file:///Manager")
                     {
-                        email.text = ""
-                        password.text = ""
+                        self.email.text = ""
+                        self.password.text = ""
                         self.navigationController?.pushViewController( ManagerViewController(), animated: true)
-
+                        
                         return
                         
                     }
@@ -116,21 +116,18 @@ class LoginViewController: UIViewController {
                     //Queue.statusViewController = StatusViewController()
                     self.navigationController?.pushViewController( StatusViewController(), animated: true)
                     //self.createAlert(title: "Login Success", message: "You're Successfully Logged In")
-                    email.text = ""
-                    password.text = ""
-                                       
-        
+                    self.email.text = ""
+                    self.password.text = ""
+                    
+                    
                     //self.navigationController?.pushViewController(StatusViewController(), animated: true)
                     //self.createAlert(title: "Login Success", message: "You have successfully logged in")
-                  //  email.text = ""
-                   // password.text = ""
+                    //  email.text = ""
+                    // password.text = ""
                 }
                 
-                }
+            }
                 
-                
-                
-            
             else // signup
             {
                 let username = email.text!
@@ -139,54 +136,49 @@ class LoginViewController: UIViewController {
                 Auth.auth().createUser(withEmail: username, password: pass) { (user, error) in
                     if let error = error {
                         print(error.localizedDescription)
-                       // return
+                        // return
                     }
                     
-                
-                if(managerButton.isSelected)
-                {
-                    let user = Auth.auth().currentUser
-                    let changeRequest = user?.createProfileChangeRequest()
-                    let tempURL = URL(fileURLWithPath: "Manager")
-                    changeRequest?.photoURL = tempURL
-                    changeRequest?.commitChanges(completion: { (error) in
+                    
+                    if(self.managerButton.isSelected)
+                    {
+                        let user = Auth.auth().currentUser
+                        let changeRequest = user?.createProfileChangeRequest()
+                        let tempURL = URL(fileURLWithPath: "Manager")
+                        changeRequest?.photoURL = tempURL
+                        changeRequest?.commitChanges(completion: { (error) in
+                            
+                        })
                         
-                    })
-                    
-                    //email.text = ""
-                    //password.text = ""
-                    
-                    self.createAlert(title: "Successful Signup Manager!", message: "Thanks for signing up!")
-
-                    //self.navigationController?.pushViewController( ManagerViewController(), animated: true)
-                }
-                else
-                {
-                    let user = Auth.auth().currentUser
-                    let changeRequest = user?.createProfileChangeRequest()
-                    let tempURL = URL(fileURLWithPath: "Customer")
-                    changeRequest?.photoURL = tempURL
-                    
-                    changeRequest?.commitChanges(completion: { (error) in
+                        //email.text = ""
+                        //password.text = ""
                         
-                    })
-                    
-                    print("customer")
-
-
-                self.createAlert(title: "Successful Signup Customer!", message: "Thanks for signing up!")
-               // email.text = ""
-               // password.text = ""
-                
-                
-                
+                        self.createAlert(title: "Successful Signup Manager!", message: "Thanks for signing up!")
+                        
+                        //self.navigationController?.pushViewController( ManagerViewController(), animated: true)
+                    }
+                    else
+                    {
+                        let user = Auth.auth().currentUser
+                        let changeRequest = user?.createProfileChangeRequest()
+                        let tempURL = URL(fileURLWithPath: "Customer")
+                        changeRequest?.photoURL = tempURL
+                        
+                        changeRequest?.commitChanges(completion: { (error) in
+                            
+                        })
+                        
+                        print("customer")
+                        
+                        
+                        self.createAlert(title: "Successful Signup Customer!", message: "Thanks for signing up!")
+                        // email.text = ""
+                        // password.text = ""
+                    }
                 }
-                
-                }
-            
+            }
         }
-        }
-        }
+    }
     
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
@@ -205,7 +197,6 @@ class LoginViewController: UIViewController {
     }
     
     
-    
      func createRadioButton(frame : CGRect, title : String, color : UIColor) -> DLRadioButton {
         // from cocoa pod
         let radioButton = DLRadioButton(frame: frame);
@@ -221,6 +212,7 @@ class LoginViewController: UIViewController {
         return radioButton;
     }
 
+    
     func switch2() {
         print("huh?")
         
@@ -234,6 +226,22 @@ class LoginViewController: UIViewController {
             managerButton.isHidden = true
             customerButton.isHidden = true
         }
+    }
+    
+    //MARK: Keyboard
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        self.view.endEditing(true)
+        if ((password.text != nil) && email.text != "") {
+            login()
+        }
+        return false
+    }
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        self.view.endEditing(true)
+    }
+    
+    func dismissKeyboard() {
+        view.endEditing(true)
     }
     
     /*
