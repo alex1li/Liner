@@ -8,6 +8,7 @@
 
 import FirebaseAuth
 import Firebase
+import FirebaseDatabase
 import UIKit
 
 
@@ -18,24 +19,42 @@ class ManagerViewController: UIViewController, UITableViewDataSource, UITableVie
     var tableView: UITableView!
     var queueName: UITextField!
     var queueWaitTime: UITextField!
+    var ref: DatabaseReference!
+    var handle: DatabaseHandle!
+    var handle2: DatabaseHandle?
+
+    var user = Auth.auth().currentUser
+
+    var myList:[String] = []
 
 
     override func viewDidLoad() {
         
         
         super.viewDidLoad()
+        
+        ref = Database.database().reference()
 
         
-        let user = Auth.auth().currentUser
         if(user?.displayName == nil){
             
             navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Create Queue", style: .plain, target: self, action: #selector(createQueue))
 
             createAlert(title: "Hey Manager!", message: "Click Create Queue to create your queue")
+            
+            
+        }
+        else {
+
+            handles()
+
+            
         }
         
         
         tableView = UITableView(frame: view.frame)
+        
+
         
         tableView.dataSource = self
         tableView.delegate = self
@@ -43,27 +62,9 @@ class ManagerViewController: UIViewController, UITableViewDataSource, UITableVie
         view.addSubview(tableView)
         
         
-        view.backgroundColor = .blue
-        
-        helloMessage = UILabel(frame: CGRect(x: 50, y: 60, width: 300, height: 50))
-        helloMessage.text = "Hello Manager! Click to create queue"
-        helloMessage.textColor = .white
-        view.addSubview(helloMessage)
-        
-            queueName = UITextField(frame: CGRect(x: 30, y: 150,width: 340, height: 40))
-            queueName.backgroundColor = .white
-            view.addSubview(queueName)
-            
-            queueWaitTime = UITextField(frame: CGRect(x: 30, y: 220,width: 340, height: 40))
-            queueWaitTime.isSecureTextEntry = true
-            queueWaitTime.backgroundColor = .white
-          //  view.addSubview(queueWaitTime)
-        
         
     
-        
-        
-        
+
         
 
         // Do any additional setup after loading the view.
@@ -71,13 +72,15 @@ class ManagerViewController: UIViewController, UITableViewDataSource, UITableVie
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         
-        return 10
+        return self.myList.count
         
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = UITableViewCell(style: .default , reuseIdentifier: "")
         cell.backgroundColor = UIColor(white: 1, alpha: 0.1)
+        
+        cell.textLabel?.text = self.myList[indexPath.row]
         
         return cell
     }
@@ -114,6 +117,40 @@ class ManagerViewController: UIViewController, UITableViewDataSource, UITableVie
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
+    }
+    
+    
+    func handles() {
+        
+        handle = ref?.child("Queues").child((user?.displayName)!).observe(.childAdded, with: { (snapshot) in
+            //Adding keys to myList instead of the values now to allow for easy deleting of top person
+            if let item = snapshot.value as! String? {
+                self.myList.append(item)
+                self.tableView.reloadData()
+                
+            }
+        })
+        
+        handle2 = ref?.child("Queues").child((user?.displayName)!).observe(.childRemoved, with: { (snapshot) in
+            //***Adding keys to myList instead of the values now to allow for easy deleting of top person
+            if (snapshot.value as! String?) != nil {
+                
+                self.myList = self.myList.filter { $0 != snapshot.value as! String}
+                self.tableView.reloadData()
+            }
+        })
+        
+
+        
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        if(handle == nil && user?.displayName != nil) {
+            
+            handles()
+            
+        }
+    
     }
     
 
