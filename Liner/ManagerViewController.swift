@@ -22,20 +22,20 @@ class ManagerViewController: UIViewController, UITableViewDataSource, UITableVie
     var ref: DatabaseReference!
     var handle: DatabaseHandle!
     var handle2: DatabaseHandle?
+    var popButton: UIButton!
 
     var user = Auth.auth().currentUser
 
     var myList:[String] = []
+    var keyList:[String] = []
 
 
     override func viewDidLoad() {
-        
         
         super.viewDidLoad()
         
         ref = Database.database().reference()
 
-        
         if(user?.displayName == nil){
             
             navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Create Queue", style: .plain, target: self, action: #selector(createQueue))
@@ -58,16 +58,38 @@ class ManagerViewController: UIViewController, UITableViewDataSource, UITableVie
         
         tableView.dataSource = self
         tableView.delegate = self
+        
 
         view.addSubview(tableView)
         
-        
+        popButton = UIButton(frame: CGRect(x: 120, y: 500, width: 100, height: 30))
+        popButton.setTitle("Pop", for: .normal)
+        popButton.setTitleColor(.black, for: .normal)
+        popButton.backgroundColor = .white
+        popButton.addTarget(self, action: #selector(pop), for: .touchUpInside)
+        view.addSubview(popButton)
         
     
 
         
 
         // Do any additional setup after loading the view.
+    }
+    
+    func pop() {
+        
+        
+        if(myList.count > 1) {
+        print(self.keyList[1])
+        self.myList.remove(at: 1)
+        self.ref?.child("Queues").child((self.user?.displayName!)!).child(self.keyList[1]).setValue(nil)
+        self.keyList.remove(at: 1)
+
+        tableView.reloadData()
+        
+        view.reloadInputViews()
+        }
+
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -129,6 +151,12 @@ class ManagerViewController: UIViewController, UITableViewDataSource, UITableVie
                 self.tableView.reloadData()
                 
             }
+            
+            if let item = snapshot.key as! String? {
+                self.keyList.append(item)
+                
+            }
+
         })
         
         handle2 = ref?.child("Queues").child((user?.displayName)!).observe(.childRemoved, with: { (snapshot) in
@@ -138,11 +166,22 @@ class ManagerViewController: UIViewController, UITableViewDataSource, UITableVie
                 self.myList = self.myList.filter { $0 != snapshot.value as! String}
                 self.tableView.reloadData()
             }
+            
+            if (snapshot.key as! String?) != nil {
+                
+                self.keyList = self.keyList.filter { $0 != snapshot.key as! String}
+            }
+
+            
+            
         })
         
 
         
     }
+    
+
+
     
     override func viewDidAppear(_ animated: Bool) {
         if(handle == nil && user?.displayName != nil) {
@@ -150,10 +189,47 @@ class ManagerViewController: UIViewController, UITableViewDataSource, UITableVie
             handles()
             
         }
+        if(user?.displayName != nil) {
+        navigationItem.rightBarButtonItem = self.editButtonItem
+        
+        }
     
     }
     
+    override func setEditing(_ editing: Bool, animated: Bool) {
+        
+        if(!tableView.isEditing)
+        {
+        tableView.isEditing = true;
+        self.editButtonItem.title = "Done"
+        }
+        
+        else {
+        tableView.isEditing = false;
+        self.editButtonItem.title = "Edit"
 
+        }
+        
+        
+    }
+    
+    
+    func tableView(_ tableView: UITableView, editActionsForRowAt indexPath: IndexPath) -> [UITableViewRowAction]? {
+        let delete = UITableViewRowAction(style: .destructive, title: "Delete") { (action, indexPath) in
+            // delete item at indexPath
+            
+        self.ref?.child("Queues").child((self.user?.displayName!)!).child(self.keyList[indexPath.row]).setValue(nil)
+            tableView.beginUpdates()
+            self.myList.remove(at: indexPath.row)
+            tableView.deleteRows(at: [indexPath], with: .automatic)
+            tableView.endUpdates()
+
+        }
+    
+        
+        return [delete]
+
+    }
     /*
     // MARK: - Navigation
 
