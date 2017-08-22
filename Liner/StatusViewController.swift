@@ -39,6 +39,8 @@ class StatusViewController: UIViewController {
     
     var user = Auth.auth().currentUser
     
+    var leaveButtonPath: Bool!
+    
     
     override func viewDidLoad() {
         print("View did load")
@@ -58,6 +60,7 @@ class StatusViewController: UIViewController {
         leaveButton.titleLabel!.textAlignment = .left
         leaveButton.isEnabled = false
         leaveButton.isHidden = true
+        leaveButtonPath = false
         view.addSubview(leaveButton)
         
         //Your Queue Label
@@ -76,7 +79,7 @@ class StatusViewController: UIViewController {
         yourLocationLabel.frame = CGRect(x: 100, y: 300, width: 200, height: 200)
         yourLocationLabel.textAlignment = .center
         yourLocationLabel.numberOfLines=1
-        yourLocationLabel.text = "People Ahead"
+        yourLocationLabel.text = "Place"
         yourLocationLabel.textColor=UIColor.black
         yourLocationLabel.font=UIFont.systemFont(ofSize: 20)
         yourLocationLabel.backgroundColor=UIColor.white
@@ -158,7 +161,7 @@ class StatusViewController: UIViewController {
             queueLocationLabel.backgroundColor=UIColor.lightGray
         }
         
-        UIView.animate(withDuration: 0.5, delay: 0.3, options: [],
+        UIView.animate(withDuration: 0.5, delay: 0, options: [],
                        animations: {
                         self.queueNameLabel.frame.size.width = CGFloat(self.labelWidth)
                         self.queueNameLabel.frame.size.height = CGFloat(self.labelHeight)
@@ -189,28 +192,38 @@ class StatusViewController: UIViewController {
                 if let item = snapshot.value as! String? {
                     
                     if(item == self.user?.email) {
-                        self.queueLocationLabel.text = String(self.myList.count-1)
+                        //print(self.myList)
+                        self.queueLocationLabel.text = String(self.myList.count)
                         Queue.userLocationFound = true
                         if (snapshot.key as String?) != nil{
-                            print(snapshot.key)
+                            //print(snapshot.key)
                             self.myKey = snapshot.key
                         }
                     }
                     if (!Queue.userLocationFound){
                         self.myList.append(item)
                     }
-                    
                 }
             })
+            /*
+            if (queueLocationLabel.text == nil){
+                leaveActions()
+            }
+            */
             
             handle2 = ref?.child("Queues").child((user?.displayName!)!).observe(.childRemoved, with: { (snapshot) in
                 if let item = snapshot.value as! String? {
-                    
-                    if let index = self.myList.index(of: item) {
+                    print("child removed")
+                    print(item)
+                    if(item == self.user?.email){
+                        if (!self.leaveButtonPath){
+                            self.leaveActions()
+                        }
+                    }
+                    else if let index = self.myList.index(of: item) {
                         self.myList.remove(at:index)
-                        self.queueLocationLabel.text = String(self.myList.count-1)
-                        print(self.myList)
-                        
+                        self.queueLocationLabel.text = String(self.myList.count)
+                        //print(self.myList)
                     }
                     
                 }
@@ -221,15 +234,16 @@ class StatusViewController: UIViewController {
     
     func leave(_ sender:Any){
         self.createLeaveAlert(title: "Leave Confirmation", message: "You will leave this queue")
-        
     }
     
     func leaveActions(){
+        //if (myKey)
         activityIndicator.startAnimating()
-        ref?.child("Queues").child((user?.displayName!)!).child(myKey).setValue(nil)
+        ref?.child("Queues").child((user?.displayName!)!).child(myKey).removeValue()
         changeRequest = (user?.createProfileChangeRequest())!
         changeRequest?.displayName = ""
         changeRequest?.commitChanges(completion: { (error) in})
+        Queue.userLocationFound = false
         while(user?.displayName != ""){
             print("waiting")
         }
@@ -246,6 +260,12 @@ class StatusViewController: UIViewController {
         queueNameLabel.textColor=UIColor.black
         leaveButton.isEnabled = false
         leaveButton.isHidden = true
+        
+        leaveButtonPath = false
+        
+        //myList.removeAll()
+        print("left")
+        print(myList)
     }
     
     func logOut(){
@@ -260,6 +280,7 @@ class StatusViewController: UIViewController {
         alert.addAction(UIAlertAction(title: "Confirm", style: UIAlertActionStyle.default, handler: {(action) in
             self.leaveActions()
             alert.dismiss(animated: true, completion: nil)
+            self.leaveButtonPath = true
         }))
         self.present(alert, animated: true, completion: nil)
     }

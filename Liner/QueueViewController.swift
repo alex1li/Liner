@@ -27,6 +27,7 @@ class QueueViewController: UIViewController {
     //Graphics
     var joinButton: UIButton!
     var peopleAheadLabel: UILabel!
+    var queueNameLabel: UILabel!
     
     let user = Auth.auth().currentUser
     var alreadyInQueue: String?
@@ -41,24 +42,27 @@ class QueueViewController: UIViewController {
         view.backgroundColor = .white
         
         //Join button
-        joinButton = UIButton(frame: CGRect(x: 60, y: 200, width: 300, height: 300))
+        joinButton = UIButton(frame: CGRect(x: 0, y: view.frame.size.height-100, width: view.frame.size.width, height: 100))
         joinButton.setTitle("Join", for: .normal)
         joinButton.addTarget(self, action:#selector(join), for: .touchUpInside)
-        //joinButton.titleLabel?.textColor = .green
-        joinButton.setTitleColor(.green, for: .normal)
+        joinButton.addTarget(self, action:#selector(pressUp), for: .touchUpOutside)
+        joinButton.addTarget(self, action:#selector(pressDown), for: .touchDown)
+        joinButton.backgroundColor = UIColor(colorLiteralRed: 40/255, green: 230/255, blue: 60/255, alpha: 1)
+        joinButton.titleLabel?.textColor = .white
+        joinButton.setTitleColor(.white, for: .normal)
         joinButton.titleLabel!.font = UIFont(name:"Avenir", size:30)
         joinButton.titleLabel!.textAlignment = .left
         view.addSubview(joinButton)
         
         //People in line label
         peopleAheadLabel = UILabel()
-        peopleAheadLabel.frame = CGRect(x: 100, y: 100, width: 200, height: 200)
+        peopleAheadLabel.frame = CGRect(x: 100, y: 200, width: 200, height: 200)
         peopleAheadLabel.textAlignment = .center
         peopleAheadLabel.numberOfLines=1
         peopleAheadLabel.text = "..."
-        peopleAheadLabel.textColor=UIColor.green
-        peopleAheadLabel.font=UIFont.systemFont(ofSize: 52)
-        peopleAheadLabel.backgroundColor=UIColor.lightGray
+        peopleAheadLabel.textColor=UIColor.black
+        peopleAheadLabel.font=UIFont.systemFont(ofSize: 72)
+        peopleAheadLabel.backgroundColor=UIColor.white
         view.addSubview(peopleAheadLabel)
         
         //loading indicator
@@ -67,6 +71,16 @@ class QueueViewController: UIViewController {
         activityIndicator.activityIndicatorViewStyle = UIActivityIndicatorViewStyle.gray
         view.addSubview(activityIndicator)
         
+        //queue name label
+        queueNameLabel = UILabel()
+        queueNameLabel.frame = CGRect(x: 0, y: 60, width: view.frame.size.width, height: 100)
+        queueNameLabel.textAlignment = .center
+        queueNameLabel.numberOfLines=1
+        queueNameLabel.text = thisQueue
+        queueNameLabel.textColor=UIColor.white
+        queueNameLabel.font=UIFont.systemFont(ofSize: 30)
+        queueNameLabel.backgroundColor=UIColor.lightGray
+        view.addSubview(queueNameLabel)
         
         ref = Database.database().reference()
         
@@ -102,7 +116,16 @@ class QueueViewController: UIViewController {
     
     
     func join(_ sender:Any){
+        pressUp(joinButton)
         self.createAlert(title: "Join Confirmation", message: "Do you want to join this queue?")
+    }
+    
+    func pressUp(_ sender:Any){
+        joinButton.backgroundColor = UIColor(colorLiteralRed: 40/255, green: 230/255, blue: 60/255, alpha: 1)
+    }
+    
+    func pressDown(_ sender:Any){
+        joinButton.backgroundColor = UIColor(colorLiteralRed: 40/255, green: 130/255, blue: 60/255, alpha: 1)
     }
     
     func confirmPressed(){
@@ -158,7 +181,7 @@ class QueueViewController: UIViewController {
         self.present(alert, animated: true, completion: nil)
     }
 
-    
+
     
     /*
      // MARK: - Navigation
