@@ -17,7 +17,7 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
     var switcher: UISegmentedControl!
     var email: UITextField!
     var password: UITextField!
-    var loginbutton: UIButton!
+    var loginButton: UIButton!
     var managerButton: DLRadioButton!
     var customerButton: DLRadioButton!
     var otherButton: [DLRadioButton]! = []
@@ -62,14 +62,16 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
         //password.backgroundColor = .white
         view.addSubview(password)
         
-        loginbutton = UIButton(frame: CGRect(x: 150, y: 400, width: 100, height: 50))
-        loginbutton.setTitle("Login", for: .normal)
-        loginbutton.backgroundColor = .blue
-        loginbutton.setTitleColor(.white, for: .normal)
-        loginbutton.addTarget(self, action:#selector(login), for: .touchUpInside)
+        loginButton = UIButton(frame: CGRect(x: 150, y: 400, width: 100, height: 50))
+        loginButton.setTitle("Login", for: .normal)
+        loginButton.backgroundColor = .blue
+        loginButton.setTitleColor(.white, for: .normal)
+        loginButton.addTarget(self, action:#selector(login), for: .touchUpInside)
+        loginButton.addTarget(self, action:#selector(pressUp), for: .touchUpOutside)
+        loginButton.addTarget(self, action:#selector(pressDown), for: .touchDown)
         
         
-        view.addSubview(loginbutton)
+        view.addSubview(loginButton)
         
         
         // Do any additional setup after loading the view.
@@ -77,14 +79,14 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
     
     override func viewDidAppear(_ animated: Bool) {
         if(switcher.selectedSegmentIndex == 1)
-        { loginbutton.setTitle("Signup", for: .normal)
+        { loginButton.setTitle("Signup", for: .normal)
         }
         
     }
     
     
     func login() {
-        
+        pressUp(loginButton)
         if(email.text != "" && password.text != "") {
             
             if(switcher.selectedSegmentIndex == 0) // login
@@ -217,12 +219,12 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
         print("huh?")
         
         if(switcher.selectedSegmentIndex == 1)
-        { loginbutton.setTitle("Signup", for: .normal)
+        { loginButton.setTitle("Signup", for: .normal)
             managerButton.isHidden = false
             customerButton.isHidden = false
         }
         if(switcher.selectedSegmentIndex == 0) {
-            loginbutton.setTitle("Login", for: .normal)
+            loginButton.setTitle("Login", for: .normal)
             managerButton.isHidden = true
             customerButton.isHidden = true
         }
@@ -242,6 +244,16 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
     
     func dismissKeyboard() {
         view.endEditing(true)
+    }
+    
+    //MARK: LOGIN BUTTON
+    
+    func pressUp(_ sender:Any){
+        loginButton.backgroundColor = UIColor(colorLiteralRed: 40/255, green: 60/255, blue: 230/255, alpha: 1)
+    }
+    
+    func pressDown(_ sender:Any){
+        loginButton.backgroundColor = UIColor(colorLiteralRed: 40/255, green: 60/255, blue: 130/255, alpha: 1)
     }
     
     /*
