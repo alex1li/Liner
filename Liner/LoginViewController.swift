@@ -28,11 +28,11 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
         super.viewDidLoad()
         
         
-        managerButton = createRadioButton(frame: CGRect(x: 30, y: 250, width: 100, height: 100), title: "Manager?", color: UIColor.white)
+        managerButton = createRadioButton(frame: CGRect(x: 30, y: 330, width: 100, height: 100), title: "Manager?", color: UIColor.black)
         managerButton.isMultipleSelectionEnabled = false
         
         view.addSubview(managerButton)
-        customerButton = createRadioButton(frame: CGRect(x: 250, y: 250, width: 100, height: 100), title: "Customer?", color: UIColor.white)
+        customerButton = createRadioButton(frame: CGRect(x: 250, y: 330, width: 100, height: 100), title: "Customer?", color: UIColor.black)
         otherButton.append(customerButton)
         managerButton.otherButtons = otherButton
         
