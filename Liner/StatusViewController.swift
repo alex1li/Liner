@@ -144,18 +144,14 @@ class StatusViewController: UIViewController {
             queueNameLabel.text = (user?.displayName)!
             queueNameLabel.backgroundColor=UIColor.blue
             queueNameLabel.textColor=UIColor.white
+            
+            handleDatabase()
         }
         else {
             queueNameLabel.text = "..."
             queueNameLabel.backgroundColor=UIColor.lightGray
             queueNameLabel.textColor=UIColor.black
-        }
-
-        //Queue Location
-        if(user?.displayName != nil && user?.displayName != ""){
-            handleDatabase()
-        }
-        else{
+            
             queueLocationLabel.text = "..."
             queueLocationLabel.textColor=UIColor.black
             queueLocationLabel.backgroundColor=UIColor.lightGray
@@ -186,6 +182,7 @@ class StatusViewController: UIViewController {
         queueLocationLabel.textColor=UIColor.white
         queueLocationLabel.backgroundColor=UIColor.blue
         if (Queue.userLocationFound != true){
+            print("creating handles")
             myList.removeAll()
             handle = ref?.child("Queues").child((user?.displayName!)!).observe(.childAdded, with: { (snapshot) in
                 //Adding keys to myList instead of the values now to allow for easy deleting of top person
@@ -216,7 +213,9 @@ class StatusViewController: UIViewController {
                     print("child removed")
                     print(item)
                     if(item == self.user?.email){
+                        print("self detected")
                         if (!self.leaveButtonPath){
+                            print("enter if")
                             self.leaveActions()
                         }
                     }
@@ -237,13 +236,15 @@ class StatusViewController: UIViewController {
     }
     
     func leaveActions(){
-        //if (myKey)
         activityIndicator.startAnimating()
         ref?.child("Queues").child((user?.displayName!)!).child(myKey).removeValue()
         changeRequest = (user?.createProfileChangeRequest())!
         changeRequest?.displayName = ""
         changeRequest?.commitChanges(completion: { (error) in})
+        
         Queue.userLocationFound = false
+        ref?.child("Queues").child((user?.displayName!)!).removeAllObservers()
+        
         while(user?.displayName != ""){
             print("waiting")
         }
