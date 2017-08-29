@@ -157,6 +157,7 @@ class StatusViewController: UIViewController {
             queueLocationLabel.backgroundColor=UIColor.lightGray
         }
         
+        
         UIView.animate(withDuration: 0.5, delay: 0, options: [],
                        animations: {
                         self.queueNameLabel.frame.size.width = CGFloat(self.labelWidth)
@@ -202,33 +203,38 @@ class StatusViewController: UIViewController {
                     }
                 }
             })
-            /*
-            if (queueLocationLabel.text == nil){
-                leaveActions()
+            
+            print(myList)
+            
+            if (user?.displayName != nil && queueLocationLabel.text == nil){
+                print("not in list")
             }
-            */
+            
+            
             
             handle2 = ref?.child("Queues").child((user?.displayName!)!).observe(.childRemoved, with: { (snapshot) in
                 if let item = snapshot.value as! String? {
                     print("child removed")
                     print(item)
                     if(item == self.user?.email){
+                        
                         print("self detected")
-                        if (!self.leaveButtonPath){
+                        print(self.leaveButtonPath)
+                        
+                        //if (!self.leaveButtonPath){
                             print("enter if")
                             self.leaveActions()
-                        }
+                        //    self.leaveButtonPath = false
+                        //}
                     }
                     else if let index = self.myList.index(of: item) {
                         self.myList.remove(at:index)
                         self.queueLocationLabel.text = String(self.myList.count)
                         //print(self.myList)
                     }
-                    
                 }
             })
         }
-        
     }
     
     func leave(_ sender:Any){
@@ -236,11 +242,16 @@ class StatusViewController: UIViewController {
     }
     
     func leaveActions(){
+        
         activityIndicator.startAnimating()
-        ref?.child("Queues").child((user?.displayName!)!).child(myKey).removeValue()
+        do{
         changeRequest = (user?.createProfileChangeRequest())!
         changeRequest?.displayName = ""
         changeRequest?.commitChanges(completion: { (error) in})
+        } catch{
+        print("caught error in leaveAction")
+        }
+        
         
         Queue.userLocationFound = false
         ref?.child("Queues").child((user?.displayName!)!).removeAllObservers()
@@ -262,7 +273,10 @@ class StatusViewController: UIViewController {
         leaveButton.isEnabled = false
         leaveButton.isHidden = true
         
-        leaveButtonPath = false
+        if leaveButtonPath == true{
+            print("leaving first time")
+        }
+        //leaveButtonPath = false
         
         //myList.removeAll()
         print("left")
@@ -279,9 +293,10 @@ class StatusViewController: UIViewController {
             alert.dismiss(animated: true, completion: nil)
         }))
         alert.addAction(UIAlertAction(title: "Confirm", style: UIAlertActionStyle.default, handler: {(action) in
-            self.leaveActions()
-            alert.dismiss(animated: true, completion: nil)
             self.leaveButtonPath = true
+            self.ref?.child("Queues").child((self.user?.displayName!)!).child(self.myKey).removeValue()
+            //self.leaveActions()
+            alert.dismiss(animated: true, completion: nil)
         }))
         self.present(alert, animated: true, completion: nil)
     }
