@@ -244,14 +244,10 @@ class StatusViewController: UIViewController {
     func leaveActions(){
         
         activityIndicator.startAnimating()
-        do{
+        
         changeRequest = (user?.createProfileChangeRequest())!
         changeRequest?.displayName = ""
         changeRequest?.commitChanges(completion: { (error) in})
-        } catch{
-        print("caught error in leaveAction")
-        }
-        
         
         Queue.userLocationFound = false
         ref?.child("Queues").child((user?.displayName!)!).removeAllObservers()
