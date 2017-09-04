@@ -68,7 +68,7 @@ class ManagerCreateQueueController: UIViewController {
             
             let user = Auth.auth().currentUser
             changeRequest = (user?.createProfileChangeRequest())!
-            changeRequest?.displayName = queueName.text
+            changeRequest?.displayName = queueName.text! + "-Open"
             changeRequest?.commitChanges(completion: { (error) in})
             
             
