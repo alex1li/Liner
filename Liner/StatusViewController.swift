@@ -39,7 +39,7 @@ class StatusViewController: UIViewController {
     
     var user = Auth.auth().currentUser
     
-    var leaveButtonPath: Bool!
+    var leaveButtonPath: Bool! //Controls whether to show removal notice alert
     
     
     override func viewDidLoad() {
@@ -257,7 +257,12 @@ class StatusViewController: UIViewController {
         }
         //print(user?.displayName)
         activityIndicator.stopAnimating()
-        print("left queue")
+        
+        print(leaveButtonPath)
+        if (!leaveButtonPath){
+            createRemovedAlert(title: "Removal Notice", message: "You have been removed from your current queue")
+        }
+        leaveButtonPath = false
         
         queueLocationLabel.text = "..."
         queueLocationLabel.textColor=UIColor.black
@@ -269,14 +274,11 @@ class StatusViewController: UIViewController {
         leaveButton.isEnabled = false
         leaveButton.isHidden = true
         
-        if leaveButtonPath == true{
-            print("leaving first time")
-        }
         //leaveButtonPath = false
         
         //myList.removeAll()
-        print("left")
-        print(myList)
+        //print("left")
+        //print(myList)
     }
     
     func logOut(){
@@ -291,7 +293,14 @@ class StatusViewController: UIViewController {
         alert.addAction(UIAlertAction(title: "Confirm", style: UIAlertActionStyle.default, handler: {(action) in
             self.leaveButtonPath = true
             self.ref?.child("Queues").child((self.user?.displayName!)!).child(self.myKey).removeValue()
-            //self.leaveActions()
+            alert.dismiss(animated: true, completion: nil)
+        }))
+        self.present(alert, animated: true, completion: nil)
+    }
+    
+    func createRemovedAlert(title: String, message: String) {
+        let alert = UIAlertController(title: title, message: message, preferredStyle: UIAlertControllerStyle.alert)
+        alert.addAction(UIAlertAction(title: "Okay", style: UIAlertActionStyle.default, handler: {(action) in
             alert.dismiss(animated: true, completion: nil)
         }))
         self.present(alert, animated: true, completion: nil)
