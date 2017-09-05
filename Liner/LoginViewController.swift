@@ -52,11 +52,13 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
         view.addSubview(switcher)
         
         email = UITextField(frame: CGRect(x: 30, y: 230,width: 320, height: 40))
+        email.placeholder = "Email"
         email.borderStyle = UITextBorderStyle.roundedRect
         //email.backgroundColor = .white
         view.addSubview(email)
         
         password = UITextField(frame: CGRect(x: 30, y: 300,width: 320, height: 40))
+        password.placeholder = "Password"
         password.isSecureTextEntry = true
         password.borderStyle = UITextBorderStyle.roundedRect
         //password.backgroundColor = .white
@@ -172,6 +174,7 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
                         
                         print("customer")
                         
+                        user?.sendEmailVerification()
                         
                         self.createAlert(title: "Successful Signup Customer!", message: "Thanks for signing up!")
                         // email.text = ""
