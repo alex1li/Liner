@@ -122,11 +122,7 @@ class ManagerViewController: UIViewController, UITableViewDataSource, UITableVie
         let cell = UITableViewCell(style: .default , reuseIdentifier: "")
         cell.backgroundColor = UIColor(white: 1, alpha: 0.1)
         
-        if(indexPath.row == myList.count - 1) {
-            return cell
-        }
-        
-        cell.textLabel?.text = myList[indexPath.row + 1]
+        cell.textLabel?.text = myList[indexPath.row]
         
         return cell
     }
