@@ -98,10 +98,15 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
                 let pass = password.text!
                 Auth.auth().signIn(withEmail: username, password: pass) { (user, error) in
                     if let error = error {
-                        self.createAlert(title: "Login Error", message: "Sorry you're not signed up!")
-                        //      email.text = ""
-                        //     password.text = ""
-                        return
+                        let alert = UIAlertController(title: "Error", message: error.localizedDescription, preferredStyle: UIAlertControllerStyle.alert)
+                        
+                        // add an action (button)
+                        alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.default, handler: {action in alert.dismiss(animated: true, completion: nil)
+                        }))
+                        
+                        // show the alert
+                        self.present(alert, animated: true, completion: nil)
+                        // return
                     }
                     
                     let user = Auth.auth().currentUser
