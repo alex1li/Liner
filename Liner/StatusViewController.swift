@@ -22,6 +22,8 @@ class StatusViewController: UIViewController {
     var queueNameLabel:UILabel!
     var queueLocationLabel:UILabel!
     
+    var location: Int!
+    
     var tableView: UITableView!
     var handle: DatabaseHandle?
     var handle2: DatabaseHandle?
