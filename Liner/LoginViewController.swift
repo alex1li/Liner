@@ -137,9 +137,20 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
                 let username = email.text!
                 let pass = password.text!
                 
+                
                 Auth.auth().createUser(withEmail: username, password: pass) { (user, error) in
                     if let error = error {
                         print(error.localizedDescription)
+                        
+                        // create the alert
+                        let alert = UIAlertController(title: "Error", message: error.localizedDescription, preferredStyle: UIAlertControllerStyle.alert)
+                        
+                        // add an action (button)
+                        alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.default, handler: {action in alert.dismiss(animated: true, completion: nil)
+                        }))
+                        
+                        // show the alert
+                        self.present(alert, animated: true, completion: nil)
                         // return
                     }
                     
@@ -163,6 +174,8 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
                     }
                     else
                     {
+                        
+                        
                         let user = Auth.auth().currentUser
                         let changeRequest = user?.createProfileChangeRequest()
                         let tempURL = URL(fileURLWithPath: "Customer")
