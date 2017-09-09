@@ -36,7 +36,7 @@ class ManagerCreateQueueController: UIViewController {
         
         queueName = UITextField(frame: CGRect(x: 30, y: 150, width: 340, height: 40))
         queueName.backgroundColor = .white
-        queueName.layer.borderWidth = 4
+        queueName.layer.borderWidth = 1
         queueName.layer.borderColor = UIColor.black.cgColor
         
         ref = Database.database().reference()

@@ -22,16 +22,18 @@ class ManagerViewController: UIViewController, UITableViewDataSource, UITableVie
     var handle: DatabaseHandle!
     var handle2: DatabaseHandle?
     var popButton: UIButton!
+    var popButtonHeight: CGFloat = 70
     var addButton: UIButton!
-    var closeButton: UIButton!
+    //var closeButton: UIButton!
     var myList:[String] = []
     var keyList:[String] = []
     var changeRequest: UserProfileChangeRequest?
 
     
-
-    
     var user = Auth.auth().currentUser
+    
+    //Menu class
+    var settingsLauncher: SettingsLauncher!
 
 
 
@@ -48,19 +50,15 @@ class ManagerViewController: UIViewController, UITableViewDataSource, UITableVie
             navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Create Queue", style: .plain, target: self, action: #selector(createQueue))
 
             createAlert(title: "Hey Manager!", message: "Click Create Queue to create your queue")
-            
-            
         }
         else {
 
             handles()
             navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Add", style: .plain, target: self, action: #selector(addSomeone))
-
-            
         }
         
-        
-        tableView = UITableView(frame: view.frame)
+        let tableViewFrame = CGRect(x: 0, y: 0, width: view.frame.width, height: view.frame.height-popButtonHeight)
+        tableView = UITableView(frame: tableViewFrame)
         
         tableView.dataSource = self
         tableView.delegate = self
@@ -68,43 +66,45 @@ class ManagerViewController: UIViewController, UITableViewDataSource, UITableVie
 
         view.addSubview(tableView)
         
-        
+        /*
         closeButton = UIButton(frame: CGRect(x: 160, y: 500, width: 100, height: 30))
         closeButton.setTitle("Close", for: .normal)
         closeButton.setTitleColor(.black, for: .normal)
         closeButton.backgroundColor = .white
         closeButton.addTarget(self, action: #selector(close), for: .touchUpInside)
         view.addSubview(closeButton)
+        */
 
         
-        popButton = UIButton(frame: CGRect(x: 110, y: 550, width: 100, height: 30))
+        popButton = UIButton(frame: CGRect(x: 0, y: view.frame.height-popButtonHeight, width: view.frame.width, height: popButtonHeight))
         popButton.setTitle("Pop", for: .normal)
         popButton.setTitleColor(.black, for: .normal)
-        popButton.backgroundColor = .white
-        popButton.addTarget(self, action: #selector(pop), for: .touchUpInside)
+        popButton.backgroundColor = UIColor(colorLiteralRed: 200/255, green: 50/255, blue: 50/255, alpha: 1)
+        popButton.addTarget(self, action: #selector(handlePop), for: .touchUpInside)
         view.addSubview(popButton)
+        
+        //Setup Navigation Menu Button
+        settingsLauncher = SettingsLauncher(view: view)
+        setupMenuButton()
         
 
         // Do any additional setup after loading the view.
     }
     
     func close() {
-        
-        
+        print("closing queue")
         
     }
     
-    func pop() {
-        
+    
+    
+    
+    func handlePop() {
 
         if(myList.count > 1) {
         print(keyList[1])
-        myList.remove(at: 1)
         ref?.child("Queues").child((self.user?.displayName!)!).child(self.keyList[1]).setValue(nil)
-        self.keyList.remove(at: 1)
-
         tableView.reloadData()
-        
         view.reloadInputViews()
         }
 
@@ -169,9 +169,7 @@ class ManagerViewController: UIViewController, UITableViewDataSource, UITableVie
             if let item = snapshot.value as! String? {
                 self.myList.append(item)
                 self.tableView.reloadData()
-                
             }
-            
             if let item = snapshot.key as! String? {
                 self.keyList.append(item)
                 
@@ -183,31 +181,18 @@ class ManagerViewController: UIViewController, UITableViewDataSource, UITableVie
             //***Adding keys to myList instead of the values now to allow for easy deleting of top person
             if (snapshot.value as! String?) != nil {
                 
-                print("freshstart")
-                
-                print("hallo")
-                if(self.myList.index(of: snapshot.value as! String) != nil) {
-                
-                    
-                print("asper")
-                let index1 = self.keyList.index(of: snapshot.key as! String)
-                print(index1)
-                print("Alexander")
-                self.keyList.remove(at: index1!)
-                print("hello")
-                self.myList.remove(at: index1!)
-                print("Hallo")
+                if let indexRemoved = self.myList.index(of: snapshot.value as! String) {
+                    print("found removed in myList")
+                    //let index1 = self.keyList.index(of: snapshot.key as! String)
+                    self.keyList.remove(at: indexRemoved)
+                    self.myList.remove(at: indexRemoved)
+            
                 }
                 
                 self.tableView.reloadData()
             }
-
-            
             
         })
-        
-
-        
     }
     
 
@@ -242,15 +227,11 @@ class ManagerViewController: UIViewController, UITableViewDataSource, UITableVie
     }
     
     func addSomeone() {
-        
-        let user = Auth.auth().currentUser
-        let currentDateTime = Date()
-        
+        //let user = Auth.auth().currentUser
+        //let currentDateTime = Date()
         self.navigationController?.pushViewController(CustomPersonViewController(), animated: true)
-        
-        
         tableView.reloadData()
-        
+
     }
     
     
@@ -276,6 +257,19 @@ class ManagerViewController: UIViewController, UITableViewDataSource, UITableVie
         return [delete]
 
     }
+    
+    //MARK: MENU BAR
+    
+    func setupMenuButton(){
+        navigationItem.leftBarButtonItem = UIBarButtonItem(title: "Settings", style: .plain, target: self, action: #selector(handleMenuButtonPressed))
+    }
+    
+    func handleMenuButtonPressed(){
+        settingsLauncher.managerViewController = self
+        settingsLauncher.showMenu()
+    }
+    
+    
     /*
     // MARK: - Navigation
 
