@@ -14,7 +14,7 @@ import Firebase
 
 
 
-class ManagerCreateQueueController: UIViewController {
+class ManagerCreateQueueController: UIViewController, UITextFieldDelegate {
     
     var queueName: UITextField!
     var queueNameLabel : UILabel!
@@ -90,6 +90,22 @@ class ManagerCreateQueueController: UIViewController {
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
+    }
+    
+    //MARK: Keyboard
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        self.view.endEditing(true)
+        if (queueNameLabel.text != nil) {
+            createdQueue()
+        }
+        return false
+    }
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        self.view.endEditing(true)
+    }
+    
+    func dismissKeyboard() {
+        view.endEditing(true)
     }
     
 
