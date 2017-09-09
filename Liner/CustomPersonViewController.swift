@@ -10,7 +10,7 @@ import UIKit
 import Firebase
 import FirebaseAuth
 
-class CustomPersonViewController: UIViewController {
+class CustomPersonViewController: UIViewController, UITextFieldDelegate {
     
     var Name: UITextField!
     var addButton: UIButton!
@@ -64,6 +64,22 @@ class CustomPersonViewController: UIViewController {
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
+    }
+    
+    //MARK: Keyboard
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        self.view.endEditing(true)
+        if (Name.text != nil) {
+            add()
+        }
+        return false
+    }
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        self.view.endEditing(true)
+    }
+    
+    func dismissKeyboard() {
+        view.endEditing(true)
     }
     
 
