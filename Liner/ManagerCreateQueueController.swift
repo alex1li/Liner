@@ -72,10 +72,10 @@ class ManagerCreateQueueController: UIViewController, UITextFieldDelegate {
             changeRequest?.commitChanges(completion: { (error) in})
             
             
-            while(user?.displayName == nil) {
-                
-                
+            while(user?.displayName == nil || user?.displayName == "") {
             }
+            print("change request")
+            print(user?.displayName)
             
             ref?.child("Queues").child((user?.displayName)!).setValue("tempVal")
             let creationTime = Date()
@@ -83,7 +83,7 @@ class ManagerCreateQueueController: UIViewController, UITextFieldDelegate {
 
             self.navigationController?.popViewController(animated: true)
             
-            
+            print("queue added")
         }
     }
 

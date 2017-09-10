@@ -44,8 +44,9 @@ class ManagerViewController: UIViewController, UITableViewDataSource, UITableVie
         self.title = user?.displayName
         
         ref = Database.database().reference()
-
-        if(user?.displayName == nil){
+        print("display name")
+        print(user?.displayName)
+        if(user?.displayName == nil || user?.displayName == ""){
             
             navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Create Queue", style: .plain, target: self, action: #selector(createQueue))
 
@@ -87,7 +88,7 @@ class ManagerViewController: UIViewController, UITableViewDataSource, UITableVie
         settingsLauncher = SettingsLauncher(view: view)
         setupMenuButton()
         
-
+        print("View Load complete")
         // Do any additional setup after loading the view.
     }
     
@@ -148,11 +149,34 @@ class ManagerViewController: UIViewController, UITableViewDataSource, UITableVie
     
     
     func createQueue() {
-        
         self.navigationController?.pushViewController(ManagerCreateQueueController(), animated: true)
+    }
+    
+    func deleteQueue(){
+        ref.child("Queues").child((self.user?.displayName!)!).removeAllObservers()
+        print("1")
+        ref.child("Queues").child((self.user?.displayName!)!).removeValue()
+        print("2")
+        ref.child("QueueInfo").child((self.user?.displayName!)!).removeAllObservers()
+        print("3")
+        ref.child("QueueInfo").child((self.user?.displayName!)!).removeValue()
+        
+        print("children removed")
+        changeRequest = (user?.createProfileChangeRequest())!
+        changeRequest?.displayName = ""
+        changeRequest?.commitChanges(completion: { (error) in})
+        
+        while(user?.displayName != ""){
+        }
+        print("user display name deleted")
+        
+        myList.removeAll()
+        keyList.removeAll()
+        tableView.reloadData()
+        
+        navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Create Queue", style: .plain, target: self, action: #selector(createQueue))
         
     }
-
     
 
 
@@ -197,15 +221,18 @@ class ManagerViewController: UIViewController, UITableViewDataSource, UITableVie
     
 
     override func viewDidAppear(_ animated: Bool) {
-        if(handle == nil && user?.displayName != nil) {
-            
-            handles()
-            
+        if(handle == nil){
+            if (user?.displayName == nil || user?.displayName == "") {
+                print("no queue associated")
+                navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Create Queue", style: .plain, target: self, action: #selector(createQueue))
+            }
+            else{
+                self.handles()
+                navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Add", style: .plain, target: self, action: #selector(addSomeone))
+            }
         }
-        if(user?.displayName != nil) {
-        navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Add", style: .plain, target: self, action: #selector(addSomeone))
         
-        }
+        print("view appeared")
     
     }
     
