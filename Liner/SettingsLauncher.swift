@@ -25,7 +25,7 @@ class SettingsLauncher: NSObject, UICollectionViewDataSource, UICollectionViewDe
     //Change this array to change the pull out menu------------------
     let settings: [Settings] = {
         return [Settings(name: "Close Queue", imageName: "settings"),
-                Settings(name: "Statistics", imageName: "settings"),
+                Settings(name: "Delete Queue", imageName: "settings"),
                 Settings(name: "Logout", imageName: "settings"),
                 Settings(name: "Dismiss", imageName: "settings")]
     }()
@@ -105,6 +105,11 @@ class SettingsLauncher: NSObject, UICollectionViewDataSource, UICollectionViewDe
             if (indexPath.item == 0){
                 self.managerViewController?.close()
             }
+            
+            else if (indexPath.item == 1){
+                self.managerViewController?.deleteQueue()
+            }
+                
             else if (indexPath.item == 2){
                 self.managerViewController?.navigationController?.popViewController(animated: true)
             }
