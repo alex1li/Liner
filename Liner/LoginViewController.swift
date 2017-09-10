@@ -167,7 +167,8 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
                         
                         //email.text = ""
                         //password.text = ""
-                        
+                        user?.sendEmailVerification()
+
                         self.createAlert(title: "Successful Signup Manager!", message: "Thanks for signing up!")
                         
                         //self.navigationController?.pushViewController( ManagerViewController(), animated: true)
