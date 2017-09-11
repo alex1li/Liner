@@ -153,28 +153,43 @@ class ManagerViewController: UIViewController, UITableViewDataSource, UITableVie
     }
     
     func deleteQueue(){
-        ref.child("Queues").child((self.user?.displayName!)!).removeAllObservers()
-        print("1")
-        ref.child("Queues").child((self.user?.displayName!)!).removeValue()
-        print("2")
-        ref.child("QueueInfo").child((self.user?.displayName!)!).removeAllObservers()
-        print("3")
-        ref.child("QueueInfo").child((self.user?.displayName!)!).removeValue()
-        
-        print("children removed")
-        changeRequest = (user?.createProfileChangeRequest())!
-        changeRequest?.displayName = ""
-        changeRequest?.commitChanges(completion: { (error) in})
-        
-        while(user?.displayName != ""){
+        if (user?.displayName == nil || user?.displayName == ""){
+            // create the alert
+            let alert = UIAlertController(title: "Error", message: "You have no queue to delete", preferredStyle: UIAlertControllerStyle.alert)
+            
+            // add an action (button)
+            alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.default, handler: {action in alert.dismiss(animated: true, completion: nil)
+            }))
+            
+            // show the alert
+            self.present(alert, animated: true, completion: nil)
+            // return
         }
-        print("user display name deleted")
+        else{
+            ref.child("Queues").child((self.user?.displayName!)!).removeAllObservers()
+            print("1")
+            ref.child("Queues").child((self.user?.displayName!)!).removeValue()
+            print("2")
+            ref.child("QueueInfo").child((self.user?.displayName!)!).removeAllObservers()
+            print("3")
+            ref.child("QueueInfo").child((self.user?.displayName!)!).removeValue()
+            
+            print("children removed")
+            changeRequest = (user?.createProfileChangeRequest())!
+            changeRequest?.displayName = ""
+            changeRequest?.commitChanges(completion: { (error) in})
+            
+            while(user?.displayName != ""){
+            }
+            print("user display name deleted")
+            
+            myList.removeAll()
+            keyList.removeAll()
+            tableView.reloadData()
+            
+            navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Create Queue", style: .plain, target: self, action: #selector(createQueue))
+        }
         
-        myList.removeAll()
-        keyList.removeAll()
-        tableView.reloadData()
-        
-        navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Create Queue", style: .plain, target: self, action: #selector(createQueue))
         
     }
     
