@@ -159,7 +159,6 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
                         // return
                     }
                     
-                    
                     if(self.managerButton.isSelected)
                     {
                         let user = Auth.auth().currentUser
@@ -199,6 +198,7 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
                         // email.text = ""
                         // password.text = ""
                     }
+                    
                 }
             }
         }
