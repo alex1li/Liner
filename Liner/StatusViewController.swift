@@ -15,9 +15,17 @@ class StatusViewController: UIViewController {
     //MARK: Display Components
     var yourQueueLabel:UILabel!
     var yourLocationLabel:UILabel!
+    var noQueueLabel:UILabel!
+    
+    var searchButton: UIButton!
+    var leaveButton: UIButton!
+    
+    var searchButtonHeight: CGFloat = 80
+    var leaveButtonHeight: CGFloat = 80
+    var leaveButtonWidth: CGFloat = 80
     
     //MARK: Dynamic components
-    let labelWidth = 300
+    var labelWidth: Int!
     let labelHeight = 100
     var queueNameLabel:UILabel!
     var queueLocationLabel:UILabel!
@@ -32,7 +40,6 @@ class StatusViewController: UIViewController {
     //var found: Bool!
     
     //MARK: Leave variables
-    var leaveButton: UIButton!
     var myKey: String!
     var changeRequest: UserProfileChangeRequest?
     var activityIndicator:UIActivityIndicatorView = UIActivityIndicatorView()
@@ -40,6 +47,8 @@ class StatusViewController: UIViewController {
     var myList:[String] = []
     
     var user = Auth.auth().currentUser
+    var inQueue: Bool!
+    
     
     var leaveButtonPath: Bool! //Controls whether to show removal notice alert
     
@@ -52,55 +61,77 @@ class StatusViewController: UIViewController {
         
         ref = Database.database().reference()
         
+        if (user?.displayName == nil || user?.displayName == ""){
+            inQueue = false
+        }
+        else{
+            inQueue = true
+        }
+        
         //Leave button
-        leaveButton = UIButton(frame: CGRect(x: 10, y: 580, width: 100, height: 100))
+        if (!inQueue){
+            leaveButton = UIButton(frame: CGRect(x: 0, y: view.frame.height-leaveButtonHeight-10, width: 0, height: leaveButtonHeight))
+        }
+        else{
+            leaveButton = UIButton(frame: CGRect(x: 0, y: view.frame.height-leaveButtonHeight, width: leaveButtonWidth, height: leaveButtonHeight))
+        }
         leaveButton.setTitle("Leave", for: .normal)
         leaveButton.addTarget(self, action:#selector(leave), for: .touchUpInside)
-        leaveButton.titleLabel?.textColor = .red
-        leaveButton.setTitleColor(.red, for: .normal)
-        leaveButton.titleLabel!.font = UIFont(name:"Avenir", size:30)
-        leaveButton.titleLabel!.textAlignment = .left
+        leaveButton.backgroundColor = .white
+        leaveButton.setTitleColor(UIColor(colorLiteralRed: 200/255, green: 50/255, blue: 50/255, alpha: 1), for: .normal)
+        leaveButton.layer.borderColor = UIColor(colorLiteralRed: 200/255, green: 50/255, blue: 50/255, alpha: 1).cgColor
+        leaveButton.layer.borderWidth = 1.5
+        leaveButton.layer.cornerRadius = 30
         leaveButton.isEnabled = false
-        leaveButton.isHidden = true
+        //leaveButton.isHidden = true
         leaveButtonPath = false
         view.addSubview(leaveButton)
         
-        //Your Queue Label
-        yourQueueLabel = UILabel()
-        yourQueueLabel.frame = CGRect(x: 100, y: 50, width: 200, height: 200)
-        yourQueueLabel.textAlignment = .center
-        yourQueueLabel.numberOfLines=1
-        yourQueueLabel.text = "Queue"
-        yourQueueLabel.textColor=UIColor.black
-        yourQueueLabel.font=UIFont.systemFont(ofSize: 20)
-        yourQueueLabel.backgroundColor=UIColor.white
-        self.view.addSubview(yourQueueLabel)
+        
+        //Search button
+        if (!inQueue){
+            searchButton = UIButton(frame: CGRect(x: 10, y: view.frame.height-searchButtonHeight-10, width: view.frame.width-20, height: searchButtonHeight))
+        }
+        else{
+            searchButton = UIButton(frame: CGRect(x: 0+leaveButtonWidth, y: view.frame.height-searchButtonHeight, width: view.frame.width-leaveButtonWidth, height: searchButtonHeight))
+        }
+        searchButton.setTitle("Search Queues", for: .normal)
+        searchButton.setTitleColor(UIColor(colorLiteralRed: 50/255, green: 200/255, blue: 50/255, alpha: 1), for: .normal)
+        searchButton.backgroundColor = .white
+        searchButton.addTarget(self, action: #selector(joinQueue), for: .touchUpInside)
+        searchButton.layer.cornerRadius = 30
+        searchButton.layer.borderColor = UIColor(colorLiteralRed: 50/255, green: 200/255, blue: 50/255, alpha: 1).cgColor
+        searchButton.layer.borderWidth = 1.5
+        view.addSubview(searchButton)
+        
         
         //Your Location Label
-        yourLocationLabel = UILabel()
-        yourLocationLabel.frame = CGRect(x: 100, y: 300, width: 200, height: 200)
-        yourLocationLabel.textAlignment = .center
-        yourLocationLabel.numberOfLines=1
-        yourLocationLabel.text = "Place"
-        yourLocationLabel.textColor=UIColor.black
-        yourLocationLabel.font=UIFont.systemFont(ofSize: 20)
-        yourLocationLabel.backgroundColor=UIColor.white
-        self.view.addSubview(yourLocationLabel)
+        
+        displayYourLocationLabel()
+        displayYourQueueLabel()
+        if (!inQueue){
+            removeYourLocationLabel()
+            removeYourQueueLabel()
+        }
+        
+        if (!inQueue){
+            displayNotInQueue()
+        }
         
         //Queue name Label
+        labelWidth = Int(view.frame.width)
         queueNameLabel = UILabel()
-        queueNameLabel.frame = CGRect(x: 50, y: 180, width: labelWidth, height: labelHeight)
+        queueNameLabel.frame = CGRect(x: 140, y: 100, width: labelWidth/2, height: labelHeight)
         queueNameLabel.textAlignment = .center
-        queueNameLabel.numberOfLines=1
-        queueNameLabel.font=UIFont.systemFont(ofSize: 30)
+        queueNameLabel.font = UIFont(name: "AppleSDGothicNeo-Thin", size: 30)
         self.view.addSubview(queueNameLabel)
         
         //Queue location label
         queueLocationLabel = UILabel()
-        queueLocationLabel.frame = CGRect(x: 50, y: 430, width: labelWidth, height: labelHeight)
+        queueLocationLabel.frame = CGRect(x: 140, y: 300, width: labelWidth/2, height: labelHeight*2)
         queueLocationLabel.textAlignment = .center
         queueLocationLabel.numberOfLines=1
-        queueLocationLabel.font=UIFont.systemFont(ofSize: 30)
+        queueLocationLabel.font = UIFont(name: "AppleSDGothicNeo-Thin", size: 180)
         
         //loading indicator
         activityIndicator.center = self.view.center
@@ -113,6 +144,7 @@ class StatusViewController: UIViewController {
         navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Join", style: .plain, target: self, action: #selector(joinQueue))
         
         navigationItem.leftBarButtonItem = UIBarButtonItem(title: "Log Out", style: .plain, target: self, action: #selector(logOut))
+        
         
         super.viewDidLoad()
         
@@ -141,31 +173,49 @@ class StatusViewController: UIViewController {
         
         //Queue Name
         if(user?.displayName != nil && user?.displayName != ""){
+            
+            displayYourLocationLabel()
+            displayYourQueueLabel()
+            
             leaveButton.isEnabled = true
-            leaveButton.isHidden = false
+            //leaveButton.isHidden = false
+            UIView.animate(withDuration: 0.5, delay: 0, usingSpringWithDamping: 1, initialSpringVelocity: 1, options: .curveEaseOut, animations: {
+                self.searchButton.frame = CGRect(x: 0+self.leaveButtonWidth, y: self.view.frame.height-self.searchButtonHeight, width: self.view.frame.width-self.leaveButtonWidth, height: self.searchButtonHeight)
+                
+                self.leaveButton.frame = CGRect(x: 0, y: self.view.frame.height-self.leaveButtonHeight, width: self.leaveButtonWidth, height: self.leaveButtonHeight)
+                
+            }, completion: nil)
+            
+            
+            
             queueNameLabel.text = (user?.displayName)!
-            queueNameLabel.backgroundColor=UIColor.blue
-            queueNameLabel.textColor=UIColor.white
+            queueNameLabel.backgroundColor = .white
+            queueNameLabel.textColor = UIColor(colorLiteralRed: 50/255, green: 50/255, blue: 200/255, alpha: 1)
             
             handleDatabase()
         }
         else {
+            
+            displayNotInQueue()
+            
+            /*
             queueNameLabel.text = "..."
-            queueNameLabel.backgroundColor=UIColor.lightGray
+            queueNameLabel.backgroundColor=UIColor.white
             queueNameLabel.textColor=UIColor.black
             
             queueLocationLabel.text = "..."
             queueLocationLabel.textColor=UIColor.black
-            queueLocationLabel.backgroundColor=UIColor.lightGray
+            queueLocationLabel.backgroundColor=UIColor.white
+            */
         }
         
         
         UIView.animate(withDuration: 0.5, delay: 0, options: [],
                        animations: {
-                        self.queueNameLabel.frame.size.width = CGFloat(self.labelWidth)
-                        self.queueNameLabel.frame.size.height = CGFloat(self.labelHeight)
-                        self.queueLocationLabel.frame.size.width = CGFloat(self.labelWidth)
-                        self.queueLocationLabel.frame.size.height = CGFloat(self.labelHeight)
+                        //self.queueNameLabel.frame.size.width = CGFloat(self.labelWidth)
+                        //self.queueNameLabel.frame.size.height = CGFloat(self.labelHeight)
+                        //self.queueLocationLabel.frame.size.width = CGFloat(self.labelWidth/2)
+                        self.queueLocationLabel.frame.size.height = CGFloat(self.labelHeight*2)
         }, 
                        completion: nil
         )
@@ -174,16 +224,23 @@ class StatusViewController: UIViewController {
     }
     
     override func viewWillAppear(_ animated: Bool) {
-        queueNameLabel.frame.size.width = 0;
-        queueNameLabel.frame.size.height = 0;
-        queueLocationLabel.frame.size.width = 0;
+        
+        removeNotInQueue()
+        
+        if(user?.displayName != nil && user?.displayName != ""){
+            removeYourLocationLabel()
+        }
+        
+        //queueNameLabel.frame.size.width = 0;
+        //queueNameLabel.frame.size.height = 0;
+        //queueLocationLabel.frame.size.width = 0;
         queueLocationLabel.frame.size.height = 0;
     }
     
     
     func handleDatabase(){
-        queueLocationLabel.textColor=UIColor.white
-        queueLocationLabel.backgroundColor=UIColor.blue
+        queueLocationLabel.textColor=UIColor(colorLiteralRed: 50/255, green: 50/255, blue: 200/255, alpha: 1)
+        queueLocationLabel.backgroundColor=UIColor.white
         if (Queue.userLocationFound != true){
             print("creating handles")
             myList.removeAll()
@@ -244,15 +301,25 @@ class StatusViewController: UIViewController {
     }
     
     func leaveActions(){
+        print("leaveActions called")
         
         activityIndicator.startAnimating()
+        
+        Queue.userLocationFound = false
+        
+        
+        if let b = self.ref?.child("Queues").child((self.user?.displayName!)!).removeAllObservers(){
+            print("observers removed")
+        }
+        else{
+            print(user?.displayName!)
+        }
+        
+        
         
         changeRequest = (user?.createProfileChangeRequest())!
         changeRequest?.displayName = ""
         changeRequest?.commitChanges(completion: { (error) in})
-        
-        Queue.userLocationFound = false
-        ref?.child("Queues").child((user?.displayName!)!).removeAllObservers()
         
         while(user?.displayName != ""){
             print("waiting")
@@ -266,15 +333,25 @@ class StatusViewController: UIViewController {
         }
         leaveButtonPath = false
         
+        displayNotInQueue()
+        /*
         queueLocationLabel.text = "..."
         queueLocationLabel.textColor=UIColor.black
-        queueLocationLabel.backgroundColor=UIColor.lightGray
+        queueLocationLabel.backgroundColor=UIColor.white
         
         queueNameLabel.text = "..."
-        queueNameLabel.backgroundColor=UIColor.lightGray
+        queueNameLabel.backgroundColor=UIColor.white
         queueNameLabel.textColor=UIColor.black
         leaveButton.isEnabled = false
-        leaveButton.isHidden = true
+        */
+        //leaveButton.isHidden = true
+        UIView.animate(withDuration: 0.5, delay: 0, usingSpringWithDamping: 1, initialSpringVelocity: 1, options: .curveEaseOut, animations: {
+            self.searchButton.frame = CGRect(x: 10, y: self.view.frame.height-self.searchButtonHeight, width: self.view.frame.width-20, height: self.searchButtonHeight)
+            
+            self.leaveButton.frame = CGRect(x: 0, y: self.view.frame.height-self.leaveButtonHeight, width: 0, height: self.leaveButtonHeight)
+            
+        }, completion: nil)
+        
         
         //leaveButtonPath = false
         
@@ -306,6 +383,62 @@ class StatusViewController: UIViewController {
             alert.dismiss(animated: true, completion: nil)
         }))
         self.present(alert, animated: true, completion: nil)
+    }
+    
+    //MARK: Display functions
+    func displayNotInQueue(){
+        noQueueLabel = UILabel()
+        noQueueLabel.frame = CGRect(x: 0, y: 70, width: view.frame.width, height: view.frame.height-180)
+        noQueueLabel.textAlignment = .center
+        noQueueLabel.numberOfLines=3
+        noQueueLabel.text = "no queue joined"
+        noQueueLabel.textColor=UIColor(colorLiteralRed: 50/255, green: 50/255, blue: 200/255, alpha: 1)
+        noQueueLabel.font = UIFont(name: "AppleSDGothicNeo-Thin", size: 100)
+        //noQueueLabel.font=UIFont.systemFont(ofSize: 100)
+        noQueueLabel.backgroundColor=UIColor.white
+        noQueueLabel.tag = 1
+        view.addSubview(noQueueLabel)
+    }
+    
+    func displayYourLocationLabel(){
+        yourLocationLabel = UILabel()
+        yourLocationLabel.frame = CGRect(x: 20, y: 270, width: 100, height: 200)
+        yourLocationLabel.textAlignment = .center
+        yourLocationLabel.numberOfLines=1
+        yourLocationLabel.text = "place in line"
+        yourLocationLabel.textColor=UIColor.black
+        yourLocationLabel.font = UIFont(name: "AppleSDGothicNeo-Thin", size: 20)
+        yourLocationLabel.backgroundColor=UIColor.white
+        self.view.addSubview(yourLocationLabel)
+    }
+    
+    func displayYourQueueLabel(){
+        yourQueueLabel = UILabel()
+        yourQueueLabel.frame = CGRect(x: 20, y: 100, width: 100, height: 100)
+        yourQueueLabel.textAlignment = .center
+        yourQueueLabel.numberOfLines=1
+        yourQueueLabel.text = "your queue"
+        yourQueueLabel.textColor=UIColor.black
+        yourQueueLabel.font = UIFont(name: "AppleSDGothicNeo-Thin", size: 20)
+        yourQueueLabel.backgroundColor=UIColor.white
+        self.view.addSubview(yourQueueLabel)
+    }
+    
+    func removeYourLocationLabel(){
+        yourLocationLabel.frame.size.height = 0
+    }
+    
+    func removeYourQueueLabel(){
+        yourQueueLabel.frame.size.height = 0
+    }
+    
+    func removeNotInQueue(){
+        print("removeNotInQueue")
+        if let viewWithTag = self.view.viewWithTag(1) {
+            viewWithTag.removeFromSuperview()
+        }else{
+            print("No tage found")
+        }
     }
     
     /*
