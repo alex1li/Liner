@@ -41,7 +41,7 @@ class ManagerViewController: UIViewController, UITableViewDataSource, UITableVie
         
         super.viewDidLoad()
         
-        self.title = user?.displayName
+        self.title = "Liner"
         
         ref = Database.database().reference()
         print("display name")
