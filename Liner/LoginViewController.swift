@@ -18,9 +18,11 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
     var email: UITextField!
     var password: UITextField!
     var loginButton: UIButton!
+    var forgotPassword: UIButton!
     var managerButton: DLRadioButton!
     var customerButton: DLRadioButton!
     var otherButton: [DLRadioButton]! = []
+    
     
     var error = 2
     
@@ -73,8 +75,14 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
         loginButton.addTarget(self, action:#selector(pressDown), for: .touchDown)
         
         
-        view.addSubview(loginButton)
+        forgotPassword = UIButton(frame: CGRect(x: 100, y: 450, width: 200, height: 50))
+        forgotPassword.setTitle("Forgot Password", for: .normal)
+        forgotPassword.setTitleColor(.black, for: .normal)
+        forgotPassword.addTarget(self, action:#selector(forgotPword), for: .touchUpInside)
         
+        view.addSubview(loginButton)
+        view.addSubview(forgotPassword)
+      
         
         // Do any additional setup after loading the view.
     }
@@ -86,6 +94,30 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
         
     }
     
+    
+    func forgotPword(){
+        let e = email.text!
+        if (e == ""){
+            
+            
+            // create the alert
+            let alert = UIAlertController(title: "Error", message: "Please enter email in the email field", preferredStyle: UIAlertControllerStyle.alert)
+            
+            // add an action (button)
+            alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.default, handler: {action in alert.dismiss(animated: true, completion: nil)
+            }))
+            
+            // show the alert
+            self.present(alert, animated: true, completion: nil)        }
+        else{
+            
+            Auth.auth().sendPasswordReset(withEmail: e){(error) in
+                print(error?.localizedDescription)
+            }
+            
+            
+        }
+    }
     
     func login() {
         pressUp(loginButton)
@@ -110,6 +142,20 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
                     }
                     
                     let user = Auth.auth().currentUser
+                    
+                    /**********************************************/
+                    if (!(user?.isEmailVerified)!){
+                        let alert = UIAlertController(title: "Error", message: "Please verify your account first", preferredStyle: UIAlertControllerStyle.alert)
+                        
+                        // add an action (button)
+                        alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.default, handler: {action in alert.dismiss(animated: true, completion: nil)
+                        }))
+                        
+                        // show the alert
+                        self.present(alert, animated: true, completion: nil)
+                        return
+                    }
+                    /**********************************************/
                     
                     print(user?.photoURL?.absoluteString)
                     if(user?.photoURL?.absoluteString == "file:///Manager")
@@ -277,6 +323,7 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
     func pressDown(_ sender:Any){
         loginButton.backgroundColor = UIColor(colorLiteralRed: 40/255, green: 60/255, blue: 130/255, alpha: 1)
     }
+    
     
     /*
      // MARK: - Navigation
