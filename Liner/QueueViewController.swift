@@ -30,6 +30,11 @@ class QueueViewController: UIViewController {
     var joinButton: UIButton!
     var peopleAheadLabel: UILabel!
     var queueNameLabel: UILabel!
+    var peopleAheadMarkerLabel: UILabel!
+    var thisQueueMarkerLabel: UILabel!
+    
+    let labelHeight = 100
+    let searchButtonHeight: CGFloat = 80
     
     let user = Auth.auth().currentUser
     var alreadyInQueue: String?
@@ -44,18 +49,42 @@ class QueueViewController: UIViewController {
         view.backgroundColor = .white
         
         //Join button
+
+        //joinButton = UIButton(frame: CGRect(x: 0, y: view.frame.size.height-100, width: view.frame.size.width, height: 100))
+        //joinButton.setTitle("Join", for: .normal)
+        //joinButton.addTarget(self, action:#selector(join), for: .touchUpInside)
+        //joinButton.addTarget(self, action:#selector(pressUp), for: .touchUpOutside)
+        //joinButton.addTarget(self, action:#selector(pressDown), for: .touchDown)
+        //joinButton.backgroundColor = UIColor(colorLiteralRed: 40/255, green: 230/255, blue: 60/255, alpha: 1)
+        //joinButton.titleLabel?.textColor = .white
+        //joinButton.setTitleColor(.white, for: .normal)
+        //joinButton.titleLabel!.font = UIFont(name:"Avenir", size:30)
+        //joinButton.titleLabel!.textAlignment = .left
         
-        
-        
+        joinButton = UIButton(frame: CGRect(x: 10, y: view.frame.height-searchButtonHeight-10, width: view.frame.width-20, height: searchButtonHeight))
+        joinButton.setTitle("Join", for: .normal)
+        joinButton.setTitleColor(UIColor(colorLiteralRed: 50/255, green: 200/255, blue: 50/255, alpha: 1), for: .normal)
+        joinButton.backgroundColor = .white
+        joinButton.layer.cornerRadius = 30
+        joinButton.layer.borderColor = UIColor(colorLiteralRed: 50/255, green: 200/255, blue: 50/255, alpha: 1).cgColor
+        joinButton.layer.borderWidth = 1.5
+        joinButton.addTarget(self, action:#selector(join), for: .touchUpInside)
+        joinButton.addTarget(self, action:#selector(pressUp), for: .touchUpOutside)
+        joinButton.addTarget(self, action:#selector(pressDown), for: .touchDown)
+        view.addSubview(joinButton)
+
         
         //People in line label
         peopleAheadLabel = UILabel()
-        peopleAheadLabel.frame = CGRect(x: 100, y: 200, width: 200, height: 200)
+        //peopleAheadLabel.frame = CGRect(x: 100, y: 200, width: 200, height: 200)
+        peopleAheadLabel.frame = CGRect(x: 140, y: 300, width: Int(view.frame.width/2), height: labelHeight*2)
         peopleAheadLabel.textAlignment = .center
         peopleAheadLabel.numberOfLines=1
-        peopleAheadLabel.text = "..."
-        peopleAheadLabel.textColor=UIColor.black
-        peopleAheadLabel.font=UIFont.systemFont(ofSize: 72)
+        peopleAheadLabel.text = "0"
+        //peopleAheadLabel.textColor=UIColor.black
+        peopleAheadLabel.textColor = UIColor(colorLiteralRed: 50/255, green: 50/255, blue: 200/255, alpha: 1)
+        //peopleAheadLabel.font=UIFont.systemFont(ofSize: 72)
+        peopleAheadLabel.font = UIFont(name: "AppleSDGothicNeo-Thin", size: 180)
         peopleAheadLabel.backgroundColor=UIColor.white
         view.addSubview(peopleAheadLabel)
         
@@ -66,15 +95,49 @@ class QueueViewController: UIViewController {
         view.addSubview(activityIndicator)
         
         //queue name label
+        let labelWidth = Int(view.frame.width)
         queueNameLabel = UILabel()
-        queueNameLabel.frame = CGRect(x: 0, y: 60, width: view.frame.size.width, height: 100)
+        queueNameLabel.frame = CGRect(x: 140, y: 100, width: labelWidth/2, height: labelHeight)
         queueNameLabel.textAlignment = .center
-        queueNameLabel.numberOfLines=1
         queueNameLabel.text = thisQueue
-        queueNameLabel.textColor=UIColor.white
-        queueNameLabel.font=UIFont.systemFont(ofSize: 30)
-        queueNameLabel.backgroundColor=UIColor.lightGray
-        view.addSubview(queueNameLabel)
+        queueNameLabel.font = UIFont(name: "AppleSDGothicNeo-Thin", size: 30)
+        queueNameLabel.textColor = UIColor(colorLiteralRed: 50/255, green: 50/255, blue: 200/255, alpha: 1)
+        queueNameLabel.backgroundColor=UIColor.white
+        queueNameLabel.lineBreakMode = .byWordWrapping
+        queueNameLabel.numberOfLines = 0;
+        self.view.addSubview(queueNameLabel)
+        
+        //queueNameLabel = UILabel()
+        //queueNameLabel.frame = CGRect(x: 0, y: 60, width: view.frame.size.width, height: 100)
+        //queueNameLabel.textAlignment = .center
+        //queueNameLabel.numberOfLines=1
+        
+        //queueNameLabel.textColor=UIColor.white
+        //queueNameLabel.font=UIFont.systemFont(ofSize: 30)
+        //queueNameLabel.backgroundColor=UIColor.lightGray
+        //view.addSubview(queueNameLabel)
+        
+        //Marker Labels
+        peopleAheadMarkerLabel = UILabel()
+        peopleAheadMarkerLabel.frame = CGRect(x: 20, y: 270, width: 100, height: 200)
+        peopleAheadMarkerLabel.textAlignment = .center
+        peopleAheadMarkerLabel.lineBreakMode = .byWordWrapping
+        peopleAheadMarkerLabel.numberOfLines = 0;
+        peopleAheadMarkerLabel.text = "people ahead"
+        peopleAheadMarkerLabel.textColor=UIColor.black
+        peopleAheadMarkerLabel.font = UIFont(name: "AppleSDGothicNeo-Thin", size: 20)
+        peopleAheadMarkerLabel.backgroundColor=UIColor.white
+        self.view.addSubview(peopleAheadMarkerLabel)
+        
+        thisQueueMarkerLabel = UILabel()
+        thisQueueMarkerLabel.frame = CGRect(x: 20, y: 100, width: 100, height: 100)
+        thisQueueMarkerLabel.textAlignment = .center
+        thisQueueMarkerLabel.numberOfLines=1
+        thisQueueMarkerLabel.text = "this queue"
+        thisQueueMarkerLabel.textColor=UIColor.black
+        thisQueueMarkerLabel.font = UIFont(name: "AppleSDGothicNeo-Thin", size: 20)
+        thisQueueMarkerLabel.backgroundColor=UIColor.white
+        self.view.addSubview(thisQueueMarkerLabel)
         
         ref = Database.database().reference()
         
@@ -154,11 +217,11 @@ class QueueViewController: UIViewController {
     }
     
     func pressUp(_ sender:Any){
-        joinButton.backgroundColor = UIColor(colorLiteralRed: 40/255, green: 230/255, blue: 60/255, alpha: 1)
+        joinButton.backgroundColor = .white
     }
     
     func pressDown(_ sender:Any){
-        joinButton.backgroundColor = UIColor(colorLiteralRed: 40/255, green: 130/255, blue: 60/255, alpha: 1)
+        joinButton.backgroundColor = UIColor(colorLiteralRed: 50/255, green: 200/255, blue: 50/255, alpha: 1)
     }
     
     func confirmPressed(){
@@ -169,6 +232,7 @@ class QueueViewController: UIViewController {
         activityIndicator.stopAnimating()
         for  controller in (self.navigationController?.viewControllers)!{
             if controller.isKind(of: StatusViewController.self){
+                controller.modalTransitionStyle = UIModalTransitionStyle.crossDissolve
                 self.navigationController?.popToViewController(controller, animated: true)
             }
         }
