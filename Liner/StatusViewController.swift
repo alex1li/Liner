@@ -70,10 +70,10 @@ class StatusViewController: UIViewController {
         
         //Leave button
         if (!inQueue){
-            leaveButton = UIButton(frame: CGRect(x: 0, y: view.frame.height-leaveButtonHeight-10, width: 0, height: leaveButtonHeight))
+            leaveButton = UIButton(frame: CGRect(x: 10, y: view.frame.height-leaveButtonHeight-10, width: 0, height: leaveButtonHeight))
         }
         else{
-            leaveButton = UIButton(frame: CGRect(x: 0, y: view.frame.height-leaveButtonHeight, width: leaveButtonWidth, height: leaveButtonHeight))
+            leaveButton = UIButton(frame: CGRect(x: 10, y: view.frame.height-leaveButtonHeight-10, width: leaveButtonWidth, height: leaveButtonHeight))
         }
         leaveButton.setTitle("Leave", for: .normal)
         leaveButton.addTarget(self, action:#selector(leave), for: .touchUpInside)
@@ -84,6 +84,8 @@ class StatusViewController: UIViewController {
         leaveButton.layer.cornerRadius = 30
         leaveButton.isEnabled = false
         //leaveButton.isHidden = true
+        leaveButton.addTarget(self, action:#selector(pressUpLeave), for: .touchUpOutside)
+        leaveButton.addTarget(self, action:#selector(pressDownLeave), for: .touchDown)
         leaveButtonPath = false
         view.addSubview(leaveButton)
         
@@ -93,7 +95,7 @@ class StatusViewController: UIViewController {
             searchButton = UIButton(frame: CGRect(x: 10, y: view.frame.height-searchButtonHeight-10, width: view.frame.width-20, height: searchButtonHeight))
         }
         else{
-            searchButton = UIButton(frame: CGRect(x: 0+leaveButtonWidth, y: view.frame.height-searchButtonHeight, width: view.frame.width-leaveButtonWidth, height: searchButtonHeight))
+            searchButton = UIButton(frame: CGRect(x: 10+leaveButtonWidth, y: view.frame.height-searchButtonHeight-10, width: view.frame.width-leaveButtonWidth-20, height: searchButtonHeight))
         }
         searchButton.setTitle("Search Queues", for: .normal)
         searchButton.setTitleColor(UIColor(colorLiteralRed: 50/255, green: 200/255, blue: 50/255, alpha: 1), for: .normal)
@@ -102,6 +104,8 @@ class StatusViewController: UIViewController {
         searchButton.layer.cornerRadius = 30
         searchButton.layer.borderColor = UIColor(colorLiteralRed: 50/255, green: 200/255, blue: 50/255, alpha: 1).cgColor
         searchButton.layer.borderWidth = 1.5
+        searchButton.addTarget(self, action:#selector(pressUpSearch), for: .touchUpOutside)
+        searchButton.addTarget(self, action:#selector(pressDownSearch), for: .touchDown)
         view.addSubview(searchButton)
         
         
@@ -109,14 +113,12 @@ class StatusViewController: UIViewController {
         
         displayYourLocationLabel()
         displayYourQueueLabel()
+        displayNotInQueue()
         if (!inQueue){
             removeYourLocationLabel()
             removeYourQueueLabel()
         }
         
-        if (!inQueue){
-            displayNotInQueue()
-        }
         
         //Queue name Label
         labelWidth = Int(view.frame.width)
@@ -124,6 +126,8 @@ class StatusViewController: UIViewController {
         queueNameLabel.frame = CGRect(x: 140, y: 100, width: labelWidth/2, height: labelHeight)
         queueNameLabel.textAlignment = .center
         queueNameLabel.font = UIFont(name: "AppleSDGothicNeo-Thin", size: 30)
+        queueNameLabel.lineBreakMode = .byWordWrapping
+        queueNameLabel.numberOfLines = 0;
         self.view.addSubview(queueNameLabel)
         
         //Queue location label
@@ -157,6 +161,7 @@ class StatusViewController: UIViewController {
     }
     
     func joinQueue(_ button:UIBarButtonItem!){
+        searchButton.backgroundColor = .white
         self.navigationController?.pushViewController( ChooseViewController(), animated: true)
     }
     
@@ -174,15 +179,16 @@ class StatusViewController: UIViewController {
         //Queue Name
         if(user?.displayName != nil && user?.displayName != ""){
             
+            removeNotInQueue()
             displayYourLocationLabel()
             displayYourQueueLabel()
             
             leaveButton.isEnabled = true
             //leaveButton.isHidden = false
             UIView.animate(withDuration: 0.5, delay: 0, usingSpringWithDamping: 1, initialSpringVelocity: 1, options: .curveEaseOut, animations: {
-                self.searchButton.frame = CGRect(x: 0+self.leaveButtonWidth, y: self.view.frame.height-self.searchButtonHeight, width: self.view.frame.width-self.leaveButtonWidth, height: self.searchButtonHeight)
+                self.searchButton.frame = CGRect(x: self.leaveButtonWidth+10, y: self.view.frame.height-self.searchButtonHeight-10, width: self.view.frame.width-self.leaveButtonWidth-20, height: self.searchButtonHeight)
                 
-                self.leaveButton.frame = CGRect(x: 0, y: self.view.frame.height-self.leaveButtonHeight, width: self.leaveButtonWidth, height: self.leaveButtonHeight)
+                self.leaveButton.frame.size.width = self.leaveButtonWidth
                 
             }, completion: nil)
             
@@ -195,8 +201,6 @@ class StatusViewController: UIViewController {
             handleDatabase()
         }
         else {
-            
-            displayNotInQueue()
             
             /*
             queueNameLabel.text = "..."
@@ -225,10 +229,12 @@ class StatusViewController: UIViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         
-        removeNotInQueue()
-        
         if(user?.displayName != nil && user?.displayName != ""){
-            removeYourLocationLabel()
+            //removeYourLocationLabel()
+            
+        }
+        else{
+            displayNotInQueue()
         }
         
         //queueNameLabel.frame.size.width = 0;
@@ -297,6 +303,7 @@ class StatusViewController: UIViewController {
     }
     
     func leave(_ sender:Any){
+        leaveButton.backgroundColor = .white
         self.createLeaveAlert(title: "Leave Confirmation", message: "You will leave this queue")
     }
     
@@ -346,9 +353,9 @@ class StatusViewController: UIViewController {
         */
         //leaveButton.isHidden = true
         UIView.animate(withDuration: 0.5, delay: 0, usingSpringWithDamping: 1, initialSpringVelocity: 1, options: .curveEaseOut, animations: {
-            self.searchButton.frame = CGRect(x: 10, y: self.view.frame.height-self.searchButtonHeight, width: self.view.frame.width-20, height: self.searchButtonHeight)
+            self.searchButton.frame = CGRect(x: 10, y: self.view.frame.height-self.searchButtonHeight-10, width: self.view.frame.width-20, height: self.searchButtonHeight)
             
-            self.leaveButton.frame = CGRect(x: 0, y: self.view.frame.height-self.leaveButtonHeight, width: 0, height: self.leaveButtonHeight)
+            self.leaveButton.frame.size.width = 0
             
         }, completion: nil)
         
@@ -433,12 +440,25 @@ class StatusViewController: UIViewController {
     }
     
     func removeNotInQueue(){
-        print("removeNotInQueue")
-        if let viewWithTag = self.view.viewWithTag(1) {
-            viewWithTag.removeFromSuperview()
-        }else{
-            print("No tage found")
-        }
+        noQueueLabel.frame.size.height = 0
+    }
+    
+    //MARK: Colors for buttons being pressed
+    
+    func pressUpSearch(_ sender:Any){
+        searchButton.backgroundColor = .white
+    }
+    
+    func pressUpLeave(_ sender:Any){
+        leaveButton.backgroundColor = .white
+    }
+    
+    func pressDownSearch(_ sender:Any){
+        searchButton.backgroundColor = UIColor(colorLiteralRed: 50/255, green: 200/255, blue: 50/255, alpha: 1)
+    }
+    
+    func pressDownLeave(_ sender:Any){
+        leaveButton.backgroundColor = UIColor(colorLiteralRed: 200/255, green: 50/255, blue: 50/255, alpha: 1)
     }
     
     /*
