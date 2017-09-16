@@ -25,8 +25,6 @@ class CustomPersonViewController: UIViewController, UITextFieldDelegate {
         
         view.backgroundColor = .white
         
-        
-        
         Name = UITextField(frame: CGRect(x: 30, y: 230,width: 320, height: 40))
         Name.borderStyle = UITextBorderStyle.roundedRect
         //email.backgroundColor = .white

@@ -16,8 +16,10 @@ class QueueViewController: UIViewController {
     var myList:[String] = []
     var handle: DatabaseHandle?
     var handle2: DatabaseHandle?
+    var handle3: DatabaseHandle?
     var ref: DatabaseReference?
     var personList:[String] = []
+    var truth: Bool! = true
     
     var inThisQueue = false
     var thisQueue = Queue.chosenQueue
@@ -47,6 +49,7 @@ class QueueViewController: UIViewController {
         view.backgroundColor = .white
         
         //Join button
+
         //joinButton = UIButton(frame: CGRect(x: 0, y: view.frame.size.height-100, width: view.frame.size.width, height: 100))
         //joinButton.setTitle("Join", for: .normal)
         //joinButton.addTarget(self, action:#selector(join), for: .touchUpInside)
@@ -69,6 +72,7 @@ class QueueViewController: UIViewController {
         joinButton.addTarget(self, action:#selector(pressUp), for: .touchUpOutside)
         joinButton.addTarget(self, action:#selector(pressDown), for: .touchDown)
         view.addSubview(joinButton)
+
         
         //People in line label
         peopleAheadLabel = UILabel()
@@ -164,6 +168,45 @@ class QueueViewController: UIViewController {
         if (user?.displayName != nil){
             alreadyInQueue = user?.displayName
         }
+        
+        handle3 = ref?.child("QueueInfo").child(thisQueue!).observe(.childAdded, with: { (snapshot) in
+            //Adding keys to myList instead of the values now to allow for easy deleting of top person
+            if let item = snapshot.value as! String? {
+                
+                if(item == "Closed") {
+                    self.truth = false;
+                    self.joinButton.setTitle("Closed", for: .normal)
+                    self.joinButton.isEnabled = false;
+                    
+                }
+                else {
+                    self.truth = true;
+                    print("True")
+                }
+                
+                
+            }
+        })
+        if (Queue.linesJoined.contains(thisQueue!)){
+            inThisQueue = true
+            self.view.backgroundColor = .blue
+        }
+        
+        
+            joinButton = UIButton(frame: CGRect(x: 0, y: view.frame.size.height-100, width: view.frame.size.width, height: 100))
+            joinButton.setTitle("Join", for: .normal)
+            joinButton.addTarget(self, action:#selector(join), for: .touchUpInside)
+            joinButton.addTarget(self, action:#selector(pressUp), for: .touchUpOutside)
+            joinButton.addTarget(self, action:#selector(pressDown), for: .touchDown)
+            joinButton.backgroundColor = UIColor(colorLiteralRed: 40/255, green: 230/255, blue: 60/255, alpha: 1)
+            joinButton.titleLabel?.textColor = .white
+            joinButton.setTitleColor(.white, for: .normal)
+            joinButton.titleLabel!.font = UIFont(name:"Avenir", size:30)
+            joinButton.titleLabel!.textAlignment = .left
+            view.addSubview(joinButton)
+        
+   
+
  
     }
     

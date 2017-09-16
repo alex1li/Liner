@@ -68,7 +68,7 @@ class ManagerCreateQueueController: UIViewController, UITextFieldDelegate {
             
             let user = Auth.auth().currentUser
             changeRequest = (user?.createProfileChangeRequest())!
-            changeRequest?.displayName = queueName.text! + "-Open"
+            changeRequest?.displayName = queueName.text!
             changeRequest?.commitChanges(completion: { (error) in})
             
             
@@ -80,6 +80,10 @@ class ManagerCreateQueueController: UIViewController, UITextFieldDelegate {
             ref?.child("Queues").child((user?.displayName)!).setValue("tempVal")
             let creationTime = Date()
             ref?.child("Queues").child((user?.displayName)!).child(String(describing: creationTime)).setValue("Created")
+            ref?.child("QueueInfo").child((user?.displayName)!).setValue("tempVal")
+            ref?.child("QueueInfo").child((user?.displayName)!).child("OpenStatus").setValue("Open")
+            
+            
 
             self.navigationController?.popViewController(animated: true)
             
