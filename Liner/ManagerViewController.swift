@@ -24,7 +24,9 @@ class ManagerViewController: UIViewController, UITableViewDataSource, UITableVie
     var popButton: UIButton!
     var popButtonHeight: CGFloat = 70
     var addButton: UIButton!
-    //var closeButton: UIButton!
+    
+    
+    var closeButton: UIButton!
     var myList:[String] = []
     var keyList:[String] = []
     var changeRequest: UserProfileChangeRequest?
@@ -66,15 +68,15 @@ class ManagerViewController: UIViewController, UITableViewDataSource, UITableVie
         
 
         view.addSubview(tableView)
+
         
-        /*
         closeButton = UIButton(frame: CGRect(x: 160, y: 500, width: 100, height: 30))
         closeButton.setTitle("Close", for: .normal)
         closeButton.setTitleColor(.black, for: .normal)
         closeButton.backgroundColor = .white
         closeButton.addTarget(self, action: #selector(close), for: .touchUpInside)
         view.addSubview(closeButton)
-        */
+ 
 
         
         popButton = UIButton(frame: CGRect(x: 0, y: view.frame.height-popButtonHeight, width: view.frame.width, height: popButtonHeight))
@@ -93,7 +95,9 @@ class ManagerViewController: UIViewController, UITableViewDataSource, UITableVie
     }
     
     func close() {
-        print("closing queue")
+        
+        
+        ref?.child("QueueInfo").child((user?.displayName)!).child("OpenStatus").setValue("Closed")
         
     }
     
