@@ -96,8 +96,9 @@ class ManagerViewController: UIViewController, UITableViewDataSource, UITableVie
     
     func close() {
         
-        
         ref?.child("QueueInfo").child((user?.displayName)!).child("OpenStatus").setValue("Closed")
+        
+        print("HelloWorldYaho")
         
     }
     
