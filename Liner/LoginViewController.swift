@@ -14,13 +14,11 @@ import DLRadioButton
 
 class LoginViewController: UIViewController, UITextFieldDelegate {
     
-    var switcher: UISegmentedControl!
     var email: UITextField!
     var password: UITextField!
     var loginButton: UIButton!
     var forgotPassword: UIButton!
-    var managerButton: DLRadioButton!
-    var customerButton: DLRadioButton!
+    var signUpButton: UIButton!
     var otherButton: [DLRadioButton]! = []
     
     
@@ -30,28 +28,9 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
         super.viewDidLoad()
         
         
-        managerButton = createRadioButton(frame: CGRect(x: 30, y: 330, width: 100, height: 100), title: "Manager?", color: UIColor.black)
-        managerButton.isMultipleSelectionEnabled = false
-        
-        view.addSubview(managerButton)
-        customerButton = createRadioButton(frame: CGRect(x: 250, y: 330, width: 100, height: 100), title: "Customer?", color: UIColor.black)
-        otherButton.append(customerButton)
-        managerButton.otherButtons = otherButton
-        
-        managerButton.isHidden = true
-        customerButton.isHidden = true
-        
         view.backgroundColor = .white
         
-        let items = ["Login", "Signup"]
-        
-        switcher = UISegmentedControl(items: items)
-        switcher.selectedSegmentIndex = 0
-        switcher.frame = CGRect(x: 150, y: 70, width: 100, height: 50)
-        switcher.backgroundColor = .white
-        switcher.addTarget(self, action: #selector(switch2), for: .allEvents)
 
-        view.addSubview(switcher)
         
         email = UITextField(frame: CGRect(x: 30, y: 230,width: 320, height: 40))
         email.placeholder = "Email"
@@ -74,26 +53,30 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
         loginButton.addTarget(self, action:#selector(pressUp), for: .touchUpOutside)
         loginButton.addTarget(self, action:#selector(pressDown), for: .touchDown)
         
+        signUpButton = UIButton(frame: CGRect(x: 0, y: 450, width: 400, height: 50))
+        signUpButton.setTitle("Not registered? Click here to sign up!", for: .normal)
+        signUpButton.setTitleColor(.black, for: .normal)
+        signUpButton.addTarget(self, action:#selector(signUp), for: .touchUpInside)
+
         
-        forgotPassword = UIButton(frame: CGRect(x: 100, y: 450, width: 200, height: 50))
+        forgotPassword = UIButton(frame: CGRect(x: 100, y: 475, width: 200, height: 50))
         forgotPassword.setTitle("Forgot Password", for: .normal)
         forgotPassword.setTitleColor(.black, for: .normal)
         forgotPassword.addTarget(self, action:#selector(forgotPword), for: .touchUpInside)
         
         view.addSubview(loginButton)
         view.addSubview(forgotPassword)
+        view.addSubview(signUpButton)
       
         
         // Do any additional setup after loading the view.
     }
     
-    override func viewDidAppear(_ animated: Bool) {
-        if(switcher.selectedSegmentIndex == 1)
-        { loginButton.setTitle("Signup", for: .normal)
-        }
-        
+
+    func signUp(){
+        self.navigationController?.pushViewController( SignUpViewController(), animated: true)
+        return
     }
-    
     
     func forgotPword(){
         let e = email.text!
@@ -122,9 +105,6 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
     func login() {
         pressUp(loginButton)
         if(email.text != "" && password.text != "") {
-            
-            if(switcher.selectedSegmentIndex == 0) // login
-            {
                 
                 let username = email.text!
                 let pass = password.text!
@@ -182,72 +162,8 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
                 }
                 
             }
-                
-            else // signup
-            {
-                let username = email.text!
-                let pass = password.text!
-                
-                
-                Auth.auth().createUser(withEmail: username, password: pass) { (user, error) in
-                    if let error = error {
-                        print(error.localizedDescription)
-                        
-                        // create the alert
-                        let alert = UIAlertController(title: "Error", message: error.localizedDescription, preferredStyle: UIAlertControllerStyle.alert)
-                        
-                        // add an action (button)
-                        alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.default, handler: {action in alert.dismiss(animated: true, completion: nil)
-                        }))
-                        
-                        // show the alert
-                        self.present(alert, animated: true, completion: nil)
-                        // return
-                    }
-                    
-                    if(self.managerButton.isSelected)
-                    {
-                        let user = Auth.auth().currentUser
-                        let changeRequest = user?.createProfileChangeRequest()
-                        let tempURL = URL(fileURLWithPath: "Manager")
-                        changeRequest?.photoURL = tempURL
-                        changeRequest?.commitChanges(completion: { (error) in
-                            
-                        })
-                        
-                        //email.text = ""
-                        //password.text = ""
-                        user?.sendEmailVerification()
-
-                        self.createAlert(title: "Successful Signup Manager!", message: "Thanks for signing up!")
-                        
-                        //self.navigationController?.pushViewController( ManagerViewController(), animated: true)
-                    }
-                    else
-                    {
-                        
-                        
-                        let user = Auth.auth().currentUser
-                        let changeRequest = user?.createProfileChangeRequest()
-                        let tempURL = URL(fileURLWithPath: "Customer")
-                        changeRequest?.photoURL = tempURL
-                        
-                        changeRequest?.commitChanges(completion: { (error) in
-                            
-                        })
-                        
-                        print("customer")
-                        
-                        user?.sendEmailVerification()
-                        
-                        self.createAlert(title: "Successful Signup Customer!", message: "Thanks for signing up!")
-                        // email.text = ""
-                        // password.text = ""
-                    }
-                    
-                }
-            }
-        }
+            
+        
     }
     
     override func didReceiveMemoryWarning() {
@@ -283,20 +199,7 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
     }
 
     
-    func switch2() {
-        print("huh?")
-        
-        if(switcher.selectedSegmentIndex == 1)
-        { loginButton.setTitle("Signup", for: .normal)
-            managerButton.isHidden = false
-            customerButton.isHidden = false
-        }
-        if(switcher.selectedSegmentIndex == 0) {
-            loginButton.setTitle("Login", for: .normal)
-            managerButton.isHidden = true
-            customerButton.isHidden = true
-        }
-    }
+
     
     //MARK: Keyboard
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {

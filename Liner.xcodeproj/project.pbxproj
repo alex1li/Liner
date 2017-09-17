@@ -22,6 +22,7 @@
 		5ADF7CAE1F3B3E2100ADDFA8 /* ChooseViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5ADF7CAD1F3B3E2100ADDFA8 /* ChooseViewController.swift */; };
 		5ADF7CB41F3B412800ADDFA8 /* QueueViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5ADF7CB31F3B412800ADDFA8 /* QueueViewController.swift */; };
 		5ADF7CB61F3B46EB00ADDFA8 /* Queue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5ADF7CB51F3B46EB00ADDFA8 /* Queue.swift */; };
+		60524B9A1F6DC367007B6701 /* SignUpViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60524B981F6CE828007B6701 /* SignUpViewController.swift */; };
 		E3F8E9B73629A4331972C8FB /* Pods_Liner.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3AEE86A26AAE9C9EB9C4D609 /* Pods_Liner.framework */; };
 		FF35AAA51F3C2AB300B18267 /* ManagerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF35AAA41F3C2AB300B18267 /* ManagerViewController.swift */; };
 		FFF4B0A01F49E0A7007FD872 /* ManagerCreateQueueController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFF4B09F1F49E0A7007FD872 /* ManagerCreateQueueController.swift */; };
@@ -59,6 +60,7 @@
 		5ADF7CAD1F3B3E2100ADDFA8 /* ChooseViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChooseViewController.swift; sourceTree = "<group>"; };
 		5ADF7CB31F3B412800ADDFA8 /* QueueViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = QueueViewController.swift; sourceTree = "<group>"; };
 		5ADF7CB51F3B46EB00ADDFA8 /* Queue.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Queue.swift; sourceTree = "<group>"; };
+		60524B981F6CE828007B6701 /* SignUpViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SignUpViewController.swift; sourceTree = "<group>"; };
 		BB7AEC157B94BE16C5EFEF50 /* Pods-LinerTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-LinerTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-LinerTests/Pods-LinerTests.debug.xcconfig"; sourceTree = "<group>"; };
 		C2BBF2470BE5BC62D9167292 /* Pods-Liner.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Liner.release.xcconfig"; path = "Pods/Target Support Files/Pods-Liner/Pods-Liner.release.xcconfig"; sourceTree = "<group>"; };
 		FF35AAA41F3C2AB300B18267 /* ManagerViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ManagerViewController.swift; sourceTree = "<group>"; };
@@ -143,6 +145,7 @@
 				5ADF7C891F3910FA00ADDFA8 /* LaunchScreen.storyboard */,
 				5ADF7C8C1F3910FA00ADDFA8 /* Info.plist */,
 				5ADF7CA01F393E8600ADDFA8 /* GoogleService-Info.plist */,
+				60524B981F6CE828007B6701 /* SignUpViewController.swift */,
 			);
 			path = Liner;
 			sourceTree = "<group>";
@@ -384,6 +387,7 @@
 				5ADF7CB61F3B46EB00ADDFA8 /* Queue.swift in Sources */,
 				5ADF7CA61F39459A00ADDFA8 /* LoginViewController.swift in Sources */,
 				5ADF7CA81F3945D400ADDFA8 /* StatusViewController.swift in Sources */,
+				60524B9A1F6DC367007B6701 /* SignUpViewController.swift in Sources */,
 				5A05CFB31F64640000A43D1F /* SettingsLauncher.swift in Sources */,
 				5ADF7CAE1F3B3E2100ADDFA8 /* ChooseViewController.swift in Sources */,
 				5A05CFB11F5E093F00A43D1F /* CustomPersonViewController.swift in Sources */,
