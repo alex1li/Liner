@@ -48,18 +48,6 @@ class QueueViewController: UIViewController {
         self.title = thisQueue
         view.backgroundColor = .white
         
-        //Join button
-
-        //joinButton = UIButton(frame: CGRect(x: 0, y: view.frame.size.height-100, width: view.frame.size.width, height: 100))
-        //joinButton.setTitle("Join", for: .normal)
-        //joinButton.addTarget(self, action:#selector(join), for: .touchUpInside)
-        //joinButton.addTarget(self, action:#selector(pressUp), for: .touchUpOutside)
-        //joinButton.addTarget(self, action:#selector(pressDown), for: .touchDown)
-        //joinButton.backgroundColor = UIColor(colorLiteralRed: 40/255, green: 230/255, blue: 60/255, alpha: 1)
-        //joinButton.titleLabel?.textColor = .white
-        //joinButton.setTitleColor(.white, for: .normal)
-        //joinButton.titleLabel!.font = UIFont(name:"Avenir", size:30)
-        //joinButton.titleLabel!.textAlignment = .left
         
         joinButton = UIButton(frame: CGRect(x: 10, y: view.frame.height-searchButtonHeight-10, width: view.frame.width-20, height: searchButtonHeight))
         joinButton.setTitle("Join", for: .normal)
@@ -76,14 +64,11 @@ class QueueViewController: UIViewController {
         
         //People in line label
         peopleAheadLabel = UILabel()
-        //peopleAheadLabel.frame = CGRect(x: 100, y: 200, width: 200, height: 200)
         peopleAheadLabel.frame = CGRect(x: 140, y: 300, width: Int(view.frame.width/2), height: labelHeight*2)
         peopleAheadLabel.textAlignment = .center
         peopleAheadLabel.numberOfLines=1
         peopleAheadLabel.text = "0"
-        //peopleAheadLabel.textColor=UIColor.black
         peopleAheadLabel.textColor = UIColor(colorLiteralRed: 50/255, green: 50/255, blue: 200/255, alpha: 1)
-        //peopleAheadLabel.font=UIFont.systemFont(ofSize: 72)
         peopleAheadLabel.font = UIFont(name: "AppleSDGothicNeo-Thin", size: 180)
         peopleAheadLabel.backgroundColor=UIColor.white
         view.addSubview(peopleAheadLabel)
@@ -192,22 +177,7 @@ class QueueViewController: UIViewController {
             self.view.backgroundColor = .blue
         }
         
-        
-            joinButton = UIButton(frame: CGRect(x: 0, y: view.frame.size.height-100, width: view.frame.size.width, height: 100))
-            joinButton.setTitle("Join", for: .normal)
-            joinButton.addTarget(self, action:#selector(join), for: .touchUpInside)
-            joinButton.addTarget(self, action:#selector(pressUp), for: .touchUpOutside)
-            joinButton.addTarget(self, action:#selector(pressDown), for: .touchDown)
-            joinButton.backgroundColor = UIColor(colorLiteralRed: 40/255, green: 230/255, blue: 60/255, alpha: 1)
-            joinButton.titleLabel?.textColor = .white
-            joinButton.setTitleColor(.white, for: .normal)
-            joinButton.titleLabel!.font = UIFont(name:"Avenir", size:30)
-            joinButton.titleLabel!.textAlignment = .left
-            view.addSubview(joinButton)
-        
-   
 
- 
     }
     
     

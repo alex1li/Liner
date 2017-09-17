@@ -137,7 +137,7 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
                     }
                     /**********************************************/
                     
-                    print(user?.photoURL?.absoluteString)
+                    //print(user?.photoURL?.absoluteString)
                     if(user?.photoURL?.absoluteString == "file:///Manager")
                     {
                         self.email.text = ""

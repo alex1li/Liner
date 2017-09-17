@@ -20,10 +20,11 @@ class SettingsLauncher: NSObject, UICollectionViewDataSource, UICollectionViewDe
     var cellID = "cellID"
     var cellHeight: CGFloat = 50
     var managerViewController: ManagerViewController?
+    var openStatus: Bool = true
     
     //class settings at bottom of this file
     //Change this array to change the pull out menu------------------
-    let settings: [Settings] = {
+    var settings: [Settings] = {
         return [Settings(name: "Close Queue", imageName: "settings"),
                 Settings(name: "Delete Queue", imageName: "settings"),
                 Settings(name: "Logout", imageName: "settings"),
@@ -103,7 +104,12 @@ class SettingsLauncher: NSObject, UICollectionViewDataSource, UICollectionViewDe
         }) { (Bool) in
             //let currentSetting = settings[indexPath.item]
             if (indexPath.item == 0){
-                self.managerViewController?.close()
+                if (self.openStatus){
+                    self.managerViewController?.close()
+                }
+                else{
+                    self.managerViewController?.open()
+                }
             }
             
             else if (indexPath.item == 1){
@@ -116,6 +122,18 @@ class SettingsLauncher: NSObject, UICollectionViewDataSource, UICollectionViewDe
         }
         
         
+    }
+    
+    func changeToOpen(){
+        settings[0] = Settings(name: "Close Queue", imageName: "settings")
+        openStatus = true
+        collectionView.reloadData()
+    }
+    
+    func changeToClose(){
+        settings[0] = Settings(name: "Open Queue", imageName: "settings")
+        openStatus = false
+        collectionView.reloadData()
     }
     
     

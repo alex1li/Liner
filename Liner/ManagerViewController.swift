@@ -18,15 +18,21 @@ class ManagerViewController: UIViewController, UITableViewDataSource, UITableVie
     var tableView: UITableView!
     var queueName: UITextField!
     var queueWaitTime: UITextField!
+    var queueNameLabel: UILabel!
+    var gradientView: UIView!
+    
+    
     var ref: DatabaseReference!
+    
     var handle: DatabaseHandle!
     var handle2: DatabaseHandle?
+    var handle3: DatabaseHandle?
+    
     var popButton: UIButton!
     var popButtonHeight: CGFloat = 70
     var addButton: UIButton!
     
     
-    var closeButton: UIButton!
     var myList:[String] = []
     var keyList:[String] = []
     var changeRequest: UserProfileChangeRequest?
@@ -42,6 +48,8 @@ class ManagerViewController: UIViewController, UITableViewDataSource, UITableVie
     override func viewDidLoad() {
         
         super.viewDidLoad()
+        
+        view.backgroundColor = .white
         
         self.title = "Liner"
         
@@ -59,32 +67,67 @@ class ManagerViewController: UIViewController, UITableViewDataSource, UITableVie
             handles()
             navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Add", style: .plain, target: self, action: #selector(addSomeone))
         }
-        
-        let tableViewFrame = CGRect(x: 0, y: 0, width: view.frame.width, height: view.frame.height-popButtonHeight)
+        let navHeight = navigationController?.navigationBar.frame.size.height
+        let tableViewFrame = CGRect(x: 0, y: navHeight!, width: view.frame.width, height: view.frame.height-popButtonHeight-navHeight!)
         tableView = UITableView(frame: tableViewFrame)
         
         tableView.dataSource = self
         tableView.delegate = self
-        
-
         view.addSubview(tableView)
-
         
-        closeButton = UIButton(frame: CGRect(x: 160, y: 500, width: 100, height: 30))
-        closeButton.setTitle("Close", for: .normal)
-        closeButton.setTitleColor(.black, for: .normal)
-        closeButton.backgroundColor = .white
-        closeButton.addTarget(self, action: #selector(close), for: .touchUpInside)
-        view.addSubview(closeButton)
+        
+        queueNameLabel = UILabel()
+        queueNameLabel.frame = CGRect(x: 0, y: navHeight!+30, width: view.frame.width, height: navHeight!)
+        queueNameLabel.textAlignment = .center
+        queueNameLabel.font = UIFont(name: "AppleSDGothicNeo-Thin", size: 40)
+        queueNameLabel.lineBreakMode = .byWordWrapping
+        queueNameLabel.numberOfLines = 0;
+        if (user?.displayName != nil && user?.displayName != ""){
+            queueNameLabel.text = (user?.displayName)!
+        }
+        else {
+            queueNameLabel.text = "no queue"
+        }
+        queueNameLabel.backgroundColor = .white
+        queueNameLabel.textColor = UIColor(colorLiteralRed: 50/255, green: 50/255, blue: 200/255, alpha: 1)
+        self.view.addSubview(queueNameLabel)
  
-
         
-        popButton = UIButton(frame: CGRect(x: 0, y: view.frame.height-popButtonHeight, width: view.frame.width, height: popButtonHeight))
+        gradientView = UIView(frame: CGRect(x: 0, y: view.frame.height-popButtonHeight-10-70, width: view.frame.width, height: 100))
+        let gradient = CAGradientLayer()
+        
+        gradient.frame = gradientView.bounds
+        gradient.colors = [UIColor(colorLiteralRed: 1, green: 1, blue: 1, alpha: 0).cgColor, UIColor(colorLiteralRed: 1, green: 1, blue: 1, alpha: 1).cgColor]
+        gradient.locations = [0.0,1.0]
+        gradientView.layer.insertSublayer(gradient, at: 0)
+        view.addSubview(gradientView)
+        
+        
+        
+        popButton = UIButton(frame: CGRect(x: 10, y: view.frame.height-popButtonHeight-10, width: view.frame.width-20-80, height: popButtonHeight))
         popButton.setTitle("Pop", for: .normal)
-        popButton.setTitleColor(.black, for: .normal)
-        popButton.backgroundColor = UIColor(colorLiteralRed: 200/255, green: 50/255, blue: 50/255, alpha: 1)
+        popButton.backgroundColor = .white
         popButton.addTarget(self, action: #selector(handlePop), for: .touchUpInside)
+        popButton.setTitleColor(UIColor(colorLiteralRed: 200/255, green: 50/255, blue: 50/255, alpha: 1), for: .normal)
+        popButton.layer.cornerRadius = 30
+        popButton.layer.borderColor = UIColor(colorLiteralRed: 200/255, green: 50/255, blue: 50/255, alpha: 1).cgColor
+        popButton.layer.borderWidth = 1.5
+        popButton.addTarget(self, action:#selector(pressUpPop), for: .touchUpOutside)
+        popButton.addTarget(self, action:#selector(pressDownPop), for: .touchDown)
         view.addSubview(popButton)
+        
+        addButton = UIButton(frame: CGRect(x: view.frame.width-20-80+10, y: view.frame.height-popButtonHeight-10, width: 80, height: popButtonHeight))
+        addButton.setTitle("Add", for: .normal)
+        addButton.backgroundColor = .white
+        addButton.addTarget(self, action: #selector(addSomeone), for: .touchUpInside)
+        addButton.setTitleColor(UIColor(colorLiteralRed: 50/255, green: 200/255, blue: 50/255, alpha: 1), for: .normal)
+        addButton.layer.cornerRadius = 30
+        addButton.layer.borderColor = UIColor(colorLiteralRed: 50/255, green: 200/255, blue: 50/255, alpha: 1).cgColor
+        addButton.layer.borderWidth = 1.5
+        addButton.addTarget(self, action:#selector(pressUpAdd), for: .touchUpOutside)
+        addButton.addTarget(self, action:#selector(pressDownAdd), for: .touchDown)
+        view.addSubview(addButton)
+        
         
         //Setup Navigation Menu Button
         settingsLauncher = SettingsLauncher(view: view)
@@ -96,9 +139,19 @@ class ManagerViewController: UIViewController, UITableViewDataSource, UITableVie
     
     func close() {
         
-        ref?.child("QueueInfo").child((user?.displayName)!).child("OpenStatus").setValue("Closed")
+        if (user?.displayName != nil && user?.displayName != ""){
+            ref?.child("QueueInfo").child((user?.displayName)!).child("OpenStatus").setValue("Closed")
+            settingsLauncher.changeToClose()
+        }
         
-        print("HelloWorldYaho")
+    }
+    
+    func open() {
+        
+        if (user?.displayName != nil && user?.displayName != ""){
+            ref?.child("QueueInfo").child((user?.displayName)!).child("OpenStatus").setValue("Open")
+            settingsLauncher.changeToOpen()
+        }
         
     }
     
@@ -106,12 +159,12 @@ class ManagerViewController: UIViewController, UITableViewDataSource, UITableVie
     
     
     func handlePop() {
-
+        popButton.backgroundColor = .white
         if(myList.count > 1) {
-        print(keyList[1])
-        ref?.child("Queues").child((self.user?.displayName!)!).child(self.keyList[1]).setValue(nil)
-        tableView.reloadData()
-        view.reloadInputViews()
+            print(keyList[1])
+            ref?.child("Queues").child((self.user?.displayName!)!).child(self.keyList[1]).setValue(nil)
+            tableView.reloadData()
+            view.reloadInputViews()
         }
 
     }
@@ -192,6 +245,8 @@ class ManagerViewController: UIViewController, UITableViewDataSource, UITableVie
             keyList.removeAll()
             tableView.reloadData()
             
+            queueNameLabel.text = "no queue"
+            
             navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Create Queue", style: .plain, target: self, action: #selector(createQueue))
         }
         
@@ -237,6 +292,20 @@ class ManagerViewController: UIViewController, UITableViewDataSource, UITableVie
             }
             
         })
+        
+        handle3 = ref?.child("QueueInfo").child((user?.displayName)!).observe(.childAdded, with: { (snapshot) in
+            //Adding keys to myList instead of the values now to allow for easy deleting of top person
+            if let item = snapshot.value as! String? {
+                
+                if(item == "Closed") {
+                    self.settingsLauncher.changeToClose()
+                    
+                }
+                
+                
+            }
+        })
+        
     }
     
 
@@ -245,14 +314,14 @@ class ManagerViewController: UIViewController, UITableViewDataSource, UITableVie
             if (user?.displayName == nil || user?.displayName == "") {
                 print("no queue associated")
                 navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Create Queue", style: .plain, target: self, action: #selector(createQueue))
+                queueNameLabel.text = "no queue"
             }
             else{
                 self.handles()
                 navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Add", style: .plain, target: self, action: #selector(addSomeone))
+                queueNameLabel.text = (user?.displayName)!
             }
         }
-        
-        print("view appeared")
     
     }
     
@@ -276,6 +345,7 @@ class ManagerViewController: UIViewController, UITableViewDataSource, UITableVie
     func addSomeone() {
         //let user = Auth.auth().currentUser
         //let currentDateTime = Date()
+        addButton.backgroundColor = .white
         self.navigationController?.pushViewController(CustomPersonViewController(), animated: true)
         tableView.reloadData()
 
@@ -314,6 +384,24 @@ class ManagerViewController: UIViewController, UITableViewDataSource, UITableVie
     func handleMenuButtonPressed(){
         settingsLauncher.managerViewController = self
         settingsLauncher.showMenu()
+    }
+    
+    //MARK: Button presses
+    
+    func pressUpPop(_ sender:Any){
+        popButton.backgroundColor = .white
+    }
+    
+    func pressDownPop(_ sender:Any){
+        popButton.backgroundColor = UIColor(colorLiteralRed: 200/255, green: 50/255, blue: 50/255, alpha: 1)
+    }
+    
+    func pressUpAdd(_ sender:Any){
+        addButton.backgroundColor = .white
+    }
+    
+    func pressDownAdd(_ sender:Any){
+        addButton.backgroundColor = UIColor(colorLiteralRed: 50/255, green: 200/255, blue: 50/255, alpha: 1)
     }
     
     
