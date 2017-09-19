@@ -109,17 +109,6 @@ class StatusViewController: UIViewController {
         view.addSubview(searchButton)
         
         
-        //Your Location Label
-        
-        displayYourLocationLabel()
-        displayYourQueueLabel()
-        displayNotInQueue()
-        if (!inQueue){
-            removeYourLocationLabel()
-            removeYourQueueLabel()
-        }
-        
-        
         //Queue name Label
         labelWidth = Int(view.frame.width)
         queueNameLabel = UILabel()
@@ -136,6 +125,7 @@ class StatusViewController: UIViewController {
         queueLocationLabel.textAlignment = .center
         queueLocationLabel.numberOfLines=1
         queueLocationLabel.font = UIFont(name: "AppleSDGothicNeo-Thin", size: 180)
+        self.view.addSubview(queueLocationLabel)
         
         //loading indicator
         activityIndicator.center = self.view.center
@@ -143,12 +133,53 @@ class StatusViewController: UIViewController {
         activityIndicator.activityIndicatorViewStyle = UIActivityIndicatorViewStyle.gray
         view.addSubview(activityIndicator)
         
-        self.view.addSubview(queueLocationLabel)
+        //Your Location Label
+        yourLocationLabel = UILabel()
+        yourLocationLabel.frame = CGRect(x: 20, y: 270, width: 100, height: 0)
+        yourLocationLabel.textAlignment = .center
+        yourLocationLabel.numberOfLines=1
+        yourLocationLabel.text = "place in line"
+        yourLocationLabel.textColor=UIColor.black
+        yourLocationLabel.font = UIFont(name: "AppleSDGothicNeo-Thin", size: 20)
+        yourLocationLabel.backgroundColor=UIColor.white
+        self.view.addSubview(yourLocationLabel)
+        
+        //Your Queue Label
+        yourQueueLabel = UILabel()
+        yourQueueLabel.frame = CGRect(x: 20, y: 100, width: 100, height: 100)
+        yourQueueLabel.textAlignment = .center
+        yourQueueLabel.numberOfLines=1
+        yourQueueLabel.text = "your queue"
+        yourQueueLabel.textColor=UIColor.black
+        yourQueueLabel.font = UIFont(name: "AppleSDGothicNeo-Thin", size: 20)
+        yourQueueLabel.backgroundColor=UIColor.white
+        self.view.addSubview(yourQueueLabel)
+        
+        
+        //noQueue Label - initally with 0 height
+        noQueueLabel = UILabel()
+        noQueueLabel.frame = CGRect(x: 0, y: 70, width: view.frame.width, height: 0)
+        noQueueLabel.textAlignment = .center
+        noQueueLabel.numberOfLines=3
+        noQueueLabel.text = "no queue joined"
+        noQueueLabel.textColor=UIColor(colorLiteralRed: 50/255, green: 50/255, blue: 200/255, alpha: 1)
+        noQueueLabel.font = UIFont(name: "AppleSDGothicNeo-Thin", size: 100)
+        noQueueLabel.backgroundColor=UIColor.white
+        noQueueLabel.tag = 1
+        view.addSubview(noQueueLabel)
+        
+        //Your Location Label
+        displayYourLocationLabel()
+        displayYourQueueLabel()
+        displayNotInQueue()
+        if (!inQueue){
+            removeYourLocationLabel()
+            removeYourQueueLabel()
+        }
         
         navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Join", style: .plain, target: self, action: #selector(joinQueue))
         
         navigationItem.leftBarButtonItem = UIBarButtonItem(title: "Log Out", style: .plain, target: self, action: #selector(logOut))
-        
         
         super.viewDidLoad()
         
@@ -179,7 +210,7 @@ class StatusViewController: UIViewController {
         //Queue Name
         if(user?.displayName != nil && user?.displayName != ""){
             
-            removeNotInQueue()
+            //removeNotInQueue()
             displayYourLocationLabel()
             displayYourQueueLabel()
             
@@ -231,7 +262,7 @@ class StatusViewController: UIViewController {
         
         if(user?.displayName != nil && user?.displayName != ""){
             //removeYourLocationLabel()
-            
+            removeNotInQueue()
         }
         else{
             displayNotInQueue()
@@ -329,7 +360,7 @@ class StatusViewController: UIViewController {
         changeRequest?.commitChanges(completion: { (error) in})
         
         while(user?.displayName != ""){
-            print("waiting")
+
         }
         //print(user?.displayName)
         activityIndicator.stopAnimating()
@@ -394,41 +425,15 @@ class StatusViewController: UIViewController {
     
     //MARK: Display functions
     func displayNotInQueue(){
-        noQueueLabel = UILabel()
-        noQueueLabel.frame = CGRect(x: 0, y: 70, width: view.frame.width, height: view.frame.height-180)
-        noQueueLabel.textAlignment = .center
-        noQueueLabel.numberOfLines=3
-        noQueueLabel.text = "no queue joined"
-        noQueueLabel.textColor=UIColor(colorLiteralRed: 50/255, green: 50/255, blue: 200/255, alpha: 1)
-        noQueueLabel.font = UIFont(name: "AppleSDGothicNeo-Thin", size: 100)
-        //noQueueLabel.font=UIFont.systemFont(ofSize: 100)
-        noQueueLabel.backgroundColor=UIColor.white
-        noQueueLabel.tag = 1
-        view.addSubview(noQueueLabel)
+        noQueueLabel.frame.size.height = view.frame.height-180
     }
     
     func displayYourLocationLabel(){
-        yourLocationLabel = UILabel()
-        yourLocationLabel.frame = CGRect(x: 20, y: 270, width: 100, height: 200)
-        yourLocationLabel.textAlignment = .center
-        yourLocationLabel.numberOfLines=1
-        yourLocationLabel.text = "place in line"
-        yourLocationLabel.textColor=UIColor.black
-        yourLocationLabel.font = UIFont(name: "AppleSDGothicNeo-Thin", size: 20)
-        yourLocationLabel.backgroundColor=UIColor.white
-        self.view.addSubview(yourLocationLabel)
+        yourLocationLabel.frame.size.height = 200
     }
     
     func displayYourQueueLabel(){
-        yourQueueLabel = UILabel()
-        yourQueueLabel.frame = CGRect(x: 20, y: 100, width: 100, height: 100)
-        yourQueueLabel.textAlignment = .center
-        yourQueueLabel.numberOfLines=1
-        yourQueueLabel.text = "your queue"
-        yourQueueLabel.textColor=UIColor.black
-        yourQueueLabel.font = UIFont(name: "AppleSDGothicNeo-Thin", size: 20)
-        yourQueueLabel.backgroundColor=UIColor.white
-        self.view.addSubview(yourQueueLabel)
+        yourQueueLabel.frame.size.height = 100
     }
     
     func removeYourLocationLabel(){
@@ -440,6 +445,7 @@ class StatusViewController: UIViewController {
     }
     
     func removeNotInQueue(){
+        print("removing no queue label")
         noQueueLabel.frame.size.height = 0
     }
     
