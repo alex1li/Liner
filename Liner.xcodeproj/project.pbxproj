@@ -132,12 +132,13 @@
 			children = (
 				5ADF7C801F3910FA00ADDFA8 /* AppDelegate.swift */,
 				5ADF7CA51F39459A00ADDFA8 /* LoginViewController.swift */,
-				5ADF7CA71F3945D400ADDFA8 /* StatusViewController.swift */,
+				60524B981F6CE828007B6701 /* SignUpViewController.swift */,
 				FF35AAA41F3C2AB300B18267 /* ManagerViewController.swift */,
 				FFF4B09F1F49E0A7007FD872 /* ManagerCreateQueueController.swift */,
 				5A05CFB01F5E093F00A43D1F /* CustomPersonViewController.swift */,
 				5A05CFB21F6463FF00A43D1F /* SettingsLauncher.swift */,
 				5A05CFB41F64707100A43D1F /* SettingsCell.swift */,
+				5ADF7CA71F3945D400ADDFA8 /* StatusViewController.swift */,
 				5ADF7CAD1F3B3E2100ADDFA8 /* ChooseViewController.swift */,
 				5ADF7CB51F3B46EB00ADDFA8 /* Queue.swift */,
 				5ADF7CB31F3B412800ADDFA8 /* QueueViewController.swift */,
@@ -145,7 +146,6 @@
 				5ADF7C891F3910FA00ADDFA8 /* LaunchScreen.storyboard */,
 				5ADF7C8C1F3910FA00ADDFA8 /* Info.plist */,
 				5ADF7CA01F393E8600ADDFA8 /* GoogleService-Info.plist */,
-				60524B981F6CE828007B6701 /* SignUpViewController.swift */,
 			);
 			path = Liner;
 			sourceTree = "<group>";

@@ -51,14 +51,17 @@ class ManagerViewController: UIViewController, UITableViewDataSource, UITableVie
         
         view.backgroundColor = .white
         
-        self.title = "Liner"
+        self.title = "lynn"
+        self.navigationController?.navigationBar.titleTextAttributes =
+            [NSForegroundColorAttributeName: UIColor.blue,
+             NSFontAttributeName: UIFont(name: "AppleSDGothicNeo-Thin", size: 30)!]
         
         ref = Database.database().reference()
         print("display name")
         print(user?.displayName)
         if(user?.displayName == nil || user?.displayName == ""){
             
-            navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Create Queue", style: .plain, target: self, action: #selector(createQueue))
+            navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Create", style: .plain, target: self, action: #selector(createQueue))
 
             createAlert(title: "Hey Manager!", message: "Click Create Queue to create your queue")
         }
@@ -68,7 +71,7 @@ class ManagerViewController: UIViewController, UITableViewDataSource, UITableVie
             navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Add", style: .plain, target: self, action: #selector(addSomeone))
         }
         let navHeight = navigationController?.navigationBar.frame.size.height
-        let tableViewFrame = CGRect(x: 0, y: navHeight!, width: view.frame.width, height: view.frame.height-popButtonHeight-navHeight!)
+        let tableViewFrame = CGRect(x: 0, y: navHeight!+10, width: view.frame.width, height: view.frame.height-popButtonHeight-navHeight!)
         tableView = UITableView(frame: tableViewFrame)
         
         tableView.dataSource = self
@@ -160,9 +163,9 @@ class ManagerViewController: UIViewController, UITableViewDataSource, UITableVie
     
     func handlePop() {
         popButton.backgroundColor = .white
-        if(myList.count > 1) {
-            print(keyList[1])
-            ref?.child("Queues").child((self.user?.displayName!)!).child(self.keyList[1]).setValue(nil)
+        if(myList.count >= 1) {
+            print("popping" + String(keyList[0]))
+            ref?.child("Queues").child((self.user?.displayName!)!).child(self.keyList[0]).setValue(nil)
             tableView.reloadData()
             view.reloadInputViews()
         }
@@ -181,7 +184,7 @@ class ManagerViewController: UIViewController, UITableViewDataSource, UITableVie
         let cell = UITableViewCell(style: .default , reuseIdentifier: "")
         cell.backgroundColor = UIColor(white: 1, alpha: 0.1)
         
-        cell.textLabel?.text = myList[indexPath.row]
+        cell.textLabel?.text = String(indexPath.row+1) + ":  " + myList[indexPath.row]
         
         return cell
     }
@@ -247,7 +250,7 @@ class ManagerViewController: UIViewController, UITableViewDataSource, UITableVie
             
             queueNameLabel.text = "no queue"
             
-            navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Create Queue", style: .plain, target: self, action: #selector(createQueue))
+            navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Create", style: .plain, target: self, action: #selector(createQueue))
         }
         
         
@@ -265,13 +268,17 @@ class ManagerViewController: UIViewController, UITableViewDataSource, UITableVie
         
         handle = ref?.child("Queues").child((user?.displayName)!).observe(.childAdded, with: { (snapshot) in
             //Adding keys to myList instead of the values now to allow for easy deleting of top person
-            if let item = snapshot.value as! String? {
-                self.myList.append(item)
-                self.tableView.reloadData()
-            }
-            if let item = snapshot.key as! String? {
-                self.keyList.append(item)
-                
+            if let value = snapshot.value as! String? {
+                if let key = snapshot.key as! String? {
+                    if (value == "Created"){
+                        print("ignore created")
+                    }
+                    else{
+                        self.myList.append(value)
+                        self.tableView.reloadData()
+                        self.keyList.append(key)
+                    }
+                }
             }
 
         })
@@ -313,7 +320,7 @@ class ManagerViewController: UIViewController, UITableViewDataSource, UITableVie
         if(handle == nil){
             if (user?.displayName == nil || user?.displayName == "") {
                 print("no queue associated")
-                navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Create Queue", style: .plain, target: self, action: #selector(createQueue))
+                navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Create", style: .plain, target: self, action: #selector(createQueue))
                 queueNameLabel.text = "no queue"
             }
             else{
@@ -346,20 +353,17 @@ class ManagerViewController: UIViewController, UITableViewDataSource, UITableVie
         //let user = Auth.auth().currentUser
         //let currentDateTime = Date()
         addButton.backgroundColor = .white
-        self.navigationController?.pushViewController(CustomPersonViewController(), animated: true)
-        tableView.reloadData()
-
+        if (user?.displayName != nil && user?.displayName != ""){
+            addButton.backgroundColor = .white
+            self.navigationController?.pushViewController(CustomPersonViewController(), animated: true)
+            tableView.reloadData()
+        }
     }
     
     
     func tableView(_ tableView: UITableView, editActionsForRowAt indexPath: IndexPath) -> [UITableViewRowAction]? {
         let delete = UITableViewRowAction(style: .destructive, title: "Delete") { (action, indexPath) in
             // delete item at indexPath
-            
-            if(indexPath.row == 0) {
-                return
-            }
-            
             
         self.ref?.child("Queues").child((self.user?.displayName!)!).child(self.keyList[indexPath.row]).setValue(nil)
             tableView.beginUpdates()

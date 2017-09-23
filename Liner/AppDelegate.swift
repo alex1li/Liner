@@ -20,7 +20,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         let mainController = LoginViewController() as UIViewController
         let navigationController = UINavigationController(rootViewController: mainController)
-        navigationController.navigationBar.backgroundColor = UIColor(colorLiteralRed: 1, green: 1, blue: 1, alpha: 0.8)
+        navigationController.navigationBar.setBackgroundImage(UIImage(), for: UIBarMetrics.default)
+        navigationController.navigationBar.shadowImage = UIImage()
+        //navigationController.navigationBar.backgroundColor = UIColor(colorLiteralRed: 1, green: 1, blue: 1, alpha: 0.8)
+        
         
         window = UIWindow()
         self.window!.rootViewController = navigationController

@@ -29,40 +29,41 @@ class ManagerCreateQueueController: UIViewController, UITextFieldDelegate {
         
         view.backgroundColor = .white
         
-        queueNameLabel = UILabel(frame: CGRect(x: 85, y: 100, width: 300, height: 30))
+        queueNameLabel = UILabel(frame: CGRect(x: 30, y: 100, width: view.frame.size.width-60, height: 30))
         queueNameLabel.textColor = .black
-        queueNameLabel.text = "Enter Queue Name Below"
+        queueNameLabel.textAlignment = .center
+        queueNameLabel.text = "create a queue"
+        queueNameLabel.font = UIFont(name: "AppleSDGothicNeo-Thin", size: 30)
         view.addSubview(queueNameLabel)
         
-        queueName = UITextField(frame: CGRect(x: 30, y: 150, width: 340, height: 40))
+        queueName = UITextField(frame: CGRect(x: 30, y: 150, width: view.frame.size.width-60, height: 40))
+        queueName.placeholder = "Queue Name"
         queueName.backgroundColor = .white
-        queueName.layer.borderWidth = 1
-        queueName.layer.borderColor = UIColor.black.cgColor
+        queueName.borderStyle = UITextBorderStyle.roundedRect
+        view.addSubview(queueName)
         
         ref = Database.database().reference()
         
-        createQueue = UIButton(frame: CGRect(x: 50, y: 200, width: 300, height: 100))
-        createQueue.setTitle("Create Queue", for: .normal)
+        createQueue = UIButton(frame: CGRect(x: 50, y: 250, width: view.frame.size.width-100, height: 60))
+        createQueue.setTitle("Create", for: .normal)
+        createQueue.layer.cornerRadius = 30
+        createQueue.layer.borderColor = UIColor(colorLiteralRed: 50/255, green: 50/255, blue: 200/255, alpha: 1).cgColor
+        createQueue.layer.borderWidth = 1.5
         createQueue.titleLabel?.textColor = .black
-        createQueue.setTitleColor(.black, for: .normal)
-        createQueue.titleLabel!.textAlignment = .left
-        view.addSubview(createQueue)
-
-        
+        createQueue.setTitleColor(UIColor(colorLiteralRed: 50/255, green: 50/255, blue: 200/255, alpha: 1), for: .normal)
+        createQueue.titleLabel!.textAlignment = .center
         createQueue.addTarget(self, action: #selector(createdQueue), for: .touchUpInside)
-        
+        createQueue.addTarget(self, action: #selector(pressDownCreate), for: .touchDown)
+        createQueue.addTarget(self, action: #selector(pressUpCreate), for: .touchUpOutside)
         view.addSubview(createQueue)
-        
-        
-        view.addSubview(queueName)
-        
-
-        
+  
 
         // Do any additional setup after loading the view.
     }
     
     func createdQueue() {
+        
+        createQueue.backgroundColor = .white
         
         if(queueName.text != nil){
             
@@ -89,6 +90,9 @@ class ManagerCreateQueueController: UIViewController, UITextFieldDelegate {
             
             print("queue added")
         }
+        else{
+            print("no queue name")
+        }
     }
 
     override func didReceiveMemoryWarning() {
@@ -110,6 +114,14 @@ class ManagerCreateQueueController: UIViewController, UITextFieldDelegate {
     
     func dismissKeyboard() {
         view.endEditing(true)
+    }
+    
+    func pressUpCreate(_ sender:Any){
+        createQueue.backgroundColor = .white
+    }
+    
+    func pressDownCreate(_ sender:Any){
+        createQueue.backgroundColor = UIColor(colorLiteralRed: 50/255, green: 50/255, blue: 200/255, alpha: 1)
     }
     
 
