@@ -30,8 +30,6 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
         
         view.backgroundColor = .white
         
-
-        
         email = UITextField(frame: CGRect(x: 30, y: 230,width: 320, height: 40))
         email.placeholder = "Email"
         email.borderStyle = UITextBorderStyle.roundedRect
@@ -67,6 +65,11 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
         view.addSubview(loginButton)
         view.addSubview(forgotPassword)
         view.addSubview(signUpButton)
+        
+        let logo = UIImageView(frame: CGRect(x: 40, y: 70, width: view.frame.size.width-80, height: 100))
+        logo.contentMode = .scaleAspectFit
+        logo.image = UIImage(named:"lynn.png")
+        view.addSubview(logo)
       
         
         // Do any additional setup after loading the view.
