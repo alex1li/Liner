@@ -30,7 +30,7 @@ class ChooseViewController: UIViewController, UITableViewDataSource, UITableView
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        self.title = "Queues"
+        self.title = "lynn"
         
         tableView = UITableView(frame: view.frame)
         tableView.dataSource = self
@@ -79,6 +79,7 @@ class ChooseViewController: UIViewController, UITableViewDataSource, UITableView
         
         cell.textLabel?.text = filteredQueues[indexPath.row]
         cell.textLabel?.textAlignment = .center
+        //cell.textLabel?.font = UIFont(name: "AppleSDGothicNeo-Light", size: 20)!
         return cell
         
         

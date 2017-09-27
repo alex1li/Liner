@@ -10,6 +10,8 @@ pod 'Firebase/Core'
 pod 'Firebase/Auth'
 pod 'Firebase/Database'
 pod 'DLRadioButton', '~> 1.4'
+pod 'Fabric'
+pod 'Crashlytics'
 
   target 'LinerTests' do
     inherit! :search_paths

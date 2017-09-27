@@ -45,7 +45,7 @@ class QueueViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.title = thisQueue
+        self.title = "lynn"
         view.backgroundColor = .white
         
         
@@ -162,6 +162,8 @@ class QueueViewController: UIViewController {
                     self.truth = false;
                     self.joinButton.setTitle("Closed", for: .normal)
                     self.joinButton.isEnabled = false;
+                    self.joinButton.setTitleColor(UIColor(colorLiteralRed: 200/255, green: 50/255, blue: 50/255, alpha: 1), for: .normal)
+                    self.joinButton.layer.borderColor = UIColor(colorLiteralRed: 200/255, green: 50/255, blue: 50/255, alpha: 1).cgColor
                     
                 }
                 else {
@@ -183,7 +185,20 @@ class QueueViewController: UIViewController {
     
     func join(_ sender:Any){
         pressUp(joinButton)
-        self.createAlert(title: "Join Confirmation", message: "Do you want to join this queue?")
+        if (user?.displayName == nil || user?.displayName == ""){
+            self.createAlert(title: "Join Confirmation", message: "Do you want to join this queue?")
+        }
+        else{
+            // create the alert
+            let alert = UIAlertController(title: "Already in a queue", message: "You can only join 1 queue at a time. Please leave your current queue before joining other queues.", preferredStyle: UIAlertControllerStyle.alert)
+            
+            // add an action (button)
+            alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.default, handler: {action in alert.dismiss(animated: true, completion: nil)
+            }))
+            
+            // show the alert
+            self.present(alert, animated: true, completion: nil)
+        }
     }
     
     func pressUp(_ sender:Any){

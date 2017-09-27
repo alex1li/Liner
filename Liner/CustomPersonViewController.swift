@@ -15,6 +15,7 @@ class CustomPersonViewController: UIViewController, UITextFieldDelegate {
     var Name: UITextField!
     var addButton: UIButton!
     var ref: DatabaseReference!
+    var personNameLabel: UILabel!
 
 
 
@@ -25,17 +26,30 @@ class CustomPersonViewController: UIViewController, UITextFieldDelegate {
         
         view.backgroundColor = .white
         
-        Name = UITextField(frame: CGRect(x: 30, y: 230,width: 320, height: 40))
+        personNameLabel = UILabel(frame: CGRect(x: 30, y: 100, width: view.frame.size.width-60, height: 30))
+        personNameLabel.textColor = .black
+        personNameLabel.textAlignment = .center
+        personNameLabel.text = "add to your queue"
+        personNameLabel.font = UIFont(name: "AppleSDGothicNeo-Thin", size: 30)
+        view.addSubview(personNameLabel)
+        
+        Name = UITextField(frame: CGRect(x: 30, y: 150, width: view.frame.size.width-60, height: 40))
         Name.placeholder = "Name"
+        Name.backgroundColor = .white
         Name.borderStyle = UITextBorderStyle.roundedRect
-        //email.backgroundColor = .white
         view.addSubview(Name)
 
-        addButton = UIButton(frame: CGRect(x: 150, y: 400, width: 100, height: 50))
-        addButton.setTitle("Add Person", for: .normal)
-        addButton.backgroundColor = .blue
-        addButton.setTitleColor(.white, for: .normal)
+        addButton = UIButton(frame: CGRect(x: 50, y: 250, width: view.frame.size.width-100, height: 60))
+        addButton.setTitle("add", for: .normal)
         addButton.addTarget(self, action:#selector(add), for: .touchUpInside)
+        addButton.addTarget(self, action: #selector(pressDownAdd), for: .touchDown)
+        addButton.addTarget(self, action: #selector(pressUpAdd), for: .touchUpOutside)
+        
+        addButton.layer.cornerRadius = 30
+        addButton.layer.borderColor = UIColor(colorLiteralRed: 50/255, green: 50/255, blue: 200/255, alpha: 1).cgColor
+        addButton.layer.borderWidth = 1.5
+        addButton.setTitleColor(UIColor(colorLiteralRed: 50/255, green: 50/255, blue: 200/255, alpha: 1), for: .normal)
+        addButton.titleLabel!.textAlignment = .center
         view.addSubview(addButton)
 
         
@@ -46,6 +60,7 @@ class CustomPersonViewController: UIViewController, UITextFieldDelegate {
     
     func add() {
         
+        addButton.backgroundColor = .white
         
         let user = Auth.auth().currentUser
         let currentDateTime = Date()
@@ -79,6 +94,14 @@ class CustomPersonViewController: UIViewController, UITextFieldDelegate {
     
     func dismissKeyboard() {
         view.endEditing(true)
+    }
+    
+    func pressUpAdd(_ sender:Any){
+        addButton.backgroundColor = .white
+    }
+    
+    func pressDownAdd(_ sender:Any){
+        addButton.backgroundColor = UIColor(colorLiteralRed: 50/255, green: 50/255, blue: 200/255, alpha: 1)
     }
     
 

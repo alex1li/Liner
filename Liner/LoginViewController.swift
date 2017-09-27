@@ -30,36 +30,40 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
         
         view.backgroundColor = .white
         
-        email = UITextField(frame: CGRect(x: 30, y: 230,width: 320, height: 40))
+        email = UITextField(frame: CGRect(x: 30, y: 200,width: view.frame.size.width-60, height: 40))
         email.placeholder = "Email"
         email.borderStyle = UITextBorderStyle.roundedRect
         //email.backgroundColor = .white
         view.addSubview(email)
         
-        password = UITextField(frame: CGRect(x: 30, y: 300,width: 320, height: 40))
+        password = UITextField(frame: CGRect(x: 30, y: 250,width: view.frame.size.width-60, height: 40))
         password.placeholder = "Password"
         password.isSecureTextEntry = true
         password.borderStyle = UITextBorderStyle.roundedRect
         //password.backgroundColor = .white
         view.addSubview(password)
         
-        loginButton = UIButton(frame: CGRect(x: 150, y: 400, width: 100, height: 50))
+        loginButton = UIButton(frame: CGRect(x: 100, y: 350, width: view.frame.size.width-200, height: 50))
         loginButton.setTitle("Login", for: .normal)
-        loginButton.backgroundColor = .blue
-        loginButton.setTitleColor(.white, for: .normal)
         loginButton.addTarget(self, action:#selector(login), for: .touchUpInside)
         loginButton.addTarget(self, action:#selector(pressUp), for: .touchUpOutside)
         loginButton.addTarget(self, action:#selector(pressDown), for: .touchDown)
+        loginButton.backgroundColor = .white
+        loginButton.layer.cornerRadius = 25
+        loginButton.layer.borderWidth = 1.5
+        loginButton.layer.borderColor = UIColor(colorLiteralRed: 50/255, green: 50/255, blue: 200/255, alpha: 1).cgColor
+        loginButton.setTitleColor(UIColor(colorLiteralRed: 50/255, green: 50/255, blue: 200/255, alpha: 1), for: .normal)
         
-        signUpButton = UIButton(frame: CGRect(x: 0, y: 450, width: 400, height: 50))
-        signUpButton.setTitle("Not registered? Click here to sign up!", for: .normal)
-        signUpButton.setTitleColor(.black, for: .normal)
+        signUpButton = UIButton(frame: CGRect(x: view.frame.size.width/2-30, y: 400, width: 60, height: 50))
+        signUpButton.setTitle("sign up", for: .normal)
+        signUpButton.setTitleColor(UIColor(colorLiteralRed: 50/255, green: 50/255, blue: 255/255, alpha: 1), for: .normal)
         signUpButton.addTarget(self, action:#selector(signUp), for: .touchUpInside)
 
         
-        forgotPassword = UIButton(frame: CGRect(x: 100, y: 475, width: 200, height: 50))
-        forgotPassword.setTitle("Forgot Password", for: .normal)
-        forgotPassword.setTitleColor(.black, for: .normal)
+        forgotPassword = UIButton(frame: CGRect(x: 17, y: 300, width: 150, height: 20))
+        forgotPassword.setTitle("forgot password", for: .normal)
+        forgotPassword.setTitleColor(UIColor(colorLiteralRed: 50/255, green: 50/255, blue: 255/255, alpha: 1), for: .normal)
+        forgotPassword.titleLabel?.font = UIFont(name: "AppleSDGothicNeo-Light", size: 17)!
         forgotPassword.addTarget(self, action:#selector(forgotPword), for: .touchUpInside)
         
         view.addSubview(loginButton)
@@ -223,11 +227,10 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
     //MARK: LOGIN BUTTON
     
     func pressUp(_ sender:Any){
-        loginButton.backgroundColor = UIColor(colorLiteralRed: 40/255, green: 60/255, blue: 230/255, alpha: 1)
-    }
+        loginButton.backgroundColor = .white    }
     
     func pressDown(_ sender:Any){
-        loginButton.backgroundColor = UIColor(colorLiteralRed: 40/255, green: 60/255, blue: 130/255, alpha: 1)
+        loginButton.backgroundColor = UIColor(colorLiteralRed: 5/255, green: 50/255, blue: 200/255, alpha: 1)
     }
     
     
