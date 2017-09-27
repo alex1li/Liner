@@ -57,7 +57,7 @@ class StatusViewController: UIViewController {
         print("View did load")
         view.backgroundColor = .white
         
-        self.title = "Status"
+        self.title = "lynn"
         
         ref = Database.database().reference()
         
@@ -345,14 +345,13 @@ class StatusViewController: UIViewController {
         
         Queue.userLocationFound = false
         
-        
-        if let b = self.ref?.child("Queues").child((self.user?.displayName!)!).removeAllObservers(){
-            print("observers removed")
-        }
-        else{
-            print(user?.displayName!)
+        let b = user?.displayName!
+        while (b==nil){
+            
         }
         
+        print(user?.displayName!)
+        self.ref?.child("Queues").child((self.user?.displayName!)!).removeAllObservers()
         
         
         changeRequest = (user?.createProfileChangeRequest())!

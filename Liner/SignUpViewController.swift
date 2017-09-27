@@ -82,11 +82,11 @@ class SignUpViewController: UIViewController, UITextFieldDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        managerButton = createRadioButton(frame: CGRect(x: 30, y: 330, width: 100, height: 100), title: "Manager?", color: UIColor.black)
+        managerButton = createRadioButton(frame: CGRect(x: 30, y: 270, width: 100, height: 100), title: "manager", color: UIColor(colorLiteralRed: 40/255, green: 60/255, blue: 130/255, alpha: 1))
         managerButton.isMultipleSelectionEnabled = false
         
         view.addSubview(managerButton)
-        customerButton = createRadioButton(frame: CGRect(x: 250, y: 330, width: 100, height: 100), title: "Customer?", color: UIColor.black)
+        customerButton = createRadioButton(frame: CGRect(x: view.frame.size.width-100, y: 270, width: 100, height: 100), title: "customer", color: UIColor(colorLiteralRed: 40/255, green: 60/255, blue: 130/255, alpha: 1))
         otherButton.append(customerButton)
         managerButton.otherButtons = otherButton
 
@@ -94,25 +94,31 @@ class SignUpViewController: UIViewController, UITextFieldDelegate {
         view.backgroundColor = .white
         
         
-        email = UITextField(frame: CGRect(x: 30, y: 230,width: 320, height: 40))
+        email = UITextField(frame: CGRect(x: 30, y: 200,width: view.frame.size.width-60, height: 40))
         email.placeholder = "Email"
         email.borderStyle = UITextBorderStyle.roundedRect
         //email.backgroundColor = .white
         view.addSubview(email)
         
-        password = UITextField(frame: CGRect(x: 30, y: 300,width: 320, height: 40))
+        password = UITextField(frame: CGRect(x: 30, y: 250,width: view.frame.size.width-60, height: 40))
         password.placeholder = "Password"
         password.isSecureTextEntry = true
         password.borderStyle = UITextBorderStyle.roundedRect
         //password.backgroundColor = .white
         view.addSubview(password)
         
-        signUpButton = UIButton(frame: CGRect(x: 150, y: 400, width: 100, height: 50))
+        signUpButton = UIButton(frame: CGRect(x: 100, y: 350, width: view.frame.size.width-200, height: 50))
         signUpButton.setTitle("Sign Up", for: .normal)
         signUpButton.backgroundColor = .blue
         signUpButton.setTitleColor(.white, for: .normal)
         signUpButton.addTarget(self, action:#selector(signUp), for: .touchUpInside)
         signUpButton.addTarget(self, action:#selector(pressUp), for: .touchUpOutside)
+        signUpButton.addTarget(self, action:#selector(pressDown), for: .touchDown)
+        signUpButton.backgroundColor = .white
+        signUpButton.layer.cornerRadius = 25
+        signUpButton.layer.borderWidth = 1.5
+        signUpButton.layer.borderColor = UIColor(colorLiteralRed: 50/255, green: 50/255, blue: 200/255, alpha: 1).cgColor
+        signUpButton.setTitleColor(UIColor(colorLiteralRed: 50/255, green: 50/255, blue: 200/255, alpha: 1), for: .normal)
         
         view.addSubview(signUpButton)
         view.addSubview(managerButton)
@@ -137,6 +143,7 @@ class SignUpViewController: UIViewController, UITextFieldDelegate {
         let username = email.text!
         let pass = password.text!
         
+        signUpButton.backgroundColor = .white
         
         Auth.auth().createUser(withEmail: username, password: pass) { (user, error) in
             if let error = error {

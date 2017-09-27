@@ -1,5 +1,8 @@
 PODS:
+  - Crashlytics (3.8.6):
+    - Fabric (~> 1.6.3)
   - DLRadioButton (1.4.9)
+  - Fabric (1.6.13)
   - Firebase/Auth (4.1.1):
     - Firebase/Core
     - FirebaseAuth (= 4.1.1)
@@ -46,13 +49,17 @@ PODS:
   - nanopb/encode (0.3.8)
 
 DEPENDENCIES:
+  - Crashlytics
   - DLRadioButton (~> 1.4)
+  - Fabric
   - Firebase/Auth
   - Firebase/Core
   - Firebase/Database
 
 SPEC CHECKSUMS:
+  Crashlytics: 95d05f4e4c19a771250c4bd9ce344d996de32bbf
   DLRadioButton: 7bb8a6e3768b572469ace553391ab4d2af6f9c19
+  Fabric: 2fb5676bc811af011a04513451f463dac6803206
   Firebase: 052c0de688fc87b414996eea13e223dd9fee3fa2
   FirebaseAnalytics: 76f754d37ca5b04f36856729b6af3ca0152d1069
   FirebaseAuth: f8b07aa83de60d606b4eadd81484b3ac2097ea3e
@@ -64,6 +71,6 @@ SPEC CHECKSUMS:
   leveldb-library: 10fb39c39e243db4af1828441162405bbcec1404
   nanopb: 5601e6bca2dbf1ed831b519092ec110f66982ca3
 
-PODFILE CHECKSUM: 824e825cf3ad1cd370711785ec3468326c29380c
+PODFILE CHECKSUM: 3a7926158cf298b0ee287813d1e4c40989ec4570
 
 COCOAPODS: 1.2.1

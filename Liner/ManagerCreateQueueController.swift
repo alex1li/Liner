@@ -49,7 +49,6 @@ class ManagerCreateQueueController: UIViewController, UITextFieldDelegate {
         createQueue.layer.cornerRadius = 30
         createQueue.layer.borderColor = UIColor(colorLiteralRed: 50/255, green: 50/255, blue: 200/255, alpha: 1).cgColor
         createQueue.layer.borderWidth = 1.5
-        createQueue.titleLabel?.textColor = .black
         createQueue.setTitleColor(UIColor(colorLiteralRed: 50/255, green: 50/255, blue: 200/255, alpha: 1), for: .normal)
         createQueue.titleLabel!.textAlignment = .center
         createQueue.addTarget(self, action: #selector(createdQueue), for: .touchUpInside)
